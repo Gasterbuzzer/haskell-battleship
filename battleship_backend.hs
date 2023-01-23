@@ -28,9 +28,6 @@ fieldAttackPosition field [x, y] | getInfoList(getInfoField3D field [x, y]) == 1
 field3DToPixelsField :: [[[Int]]] -> [[Int]]
 field3DToPixelsField field = [ x | ys <- field, x <- ys]
 
-fill3DField [[[]]]
-fill3DField field
-
 
 -- fieldInsertShip field [x:xs] amount | amount > 0 = (fieldInsertShip (writeInfoField3D field [(x !! 0), (x !! 1), 1]) xs (amount-1))
                                     -- | otherwise = field
