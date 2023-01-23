@@ -5,7 +5,7 @@ dim = [30, 12]
 
 -- Field Info
 field_ = fieldCreate3D dim
-field__ = fieldCreate3D [10, 10]
+field_game = fieldCreate3D [10, 10]
 
 fieldCreate3D :: [Int] -> [[[Int]]]
 -- Similar to 1D Version creates a field (x, y) Position on Board and a third component storing what pixel type.
@@ -45,9 +45,3 @@ getYList [x, y, info] = y
 
 getXYList :: [Int] -> [Int]
 getXYList [x, y, info] = [x, y]
-
-main :: IO ()
-main = do
-    cat <- newIORef (3 :: Int)
-    readIORef cat >>= print
-    -- putStrLn (show (fieldCreate3D dim))
