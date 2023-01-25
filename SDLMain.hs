@@ -55,17 +55,12 @@ move (xdim, ydim) ("Pressed", "SPACE", _) (x, y, a, 0, c) = (x, y, a, 1, c)
 move (xdim, ydim) ("Pressed", "SPACE", _) (x, y, a, 1, c) = (x, y, a, 0, c)
 move _ _ (x, y, a, b, c) = (x, y, a, b, c)
 
---         wall dimens   state      generated frame
-toFrame :: (Int, Int) -> MyState -> ListFrame
-toFrame (xdim, ydim) (x', y',a',b',_) =
-
-
 
 -- BEGIN MAIN FUNCTIONALITY
 
 --         wall dimens   state      generated frame
 toFrame :: (Int, Int) -> MyState -> ListFrame
-toFrame (xdim, ydim) (x', y', cursorColor, mode, drawFrame) =
+toFrame (xdim, ydim) (x', y',a',b',_) =
   ListFrame $
     map
       ( \y ->
