@@ -29,8 +29,6 @@ getButtonDataTuples buttonState =
 
 -- BEGIN MAIN FUNCTIONALITY
 
-type MyState = (Int, Int, Int, Int, Int)
-
 --      wall dimens   input event  state      new state
 move :: (Int, Int) -> KeyStatus -> MyState -> MyState
 move (xdim, ydim) ("Pressed", "P0_Axis_1_D0", _) (x, y, a, b, c) = (x, ((y - 2) `mod` ydim) + 1, a, b, c)
