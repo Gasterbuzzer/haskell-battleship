@@ -154,7 +154,7 @@ toFrameList (xdim, ydim) pixels (x, y, cursorColor, cursorMode, frameMode) = cas
           2 -> (Pixel 120 120 120) -- Grey
           3 -> (Pixel 255 132 0) -- Orange
           4 -> (Pixel 0 255 98) -- Green
-  1 -> toFrame dim (x, y, cursorMode, frameMode)
+  1 -> toFrame dim (x, y, cursorColor, cursorMode, frameMode)
 
 
 getInfoPixel :: [[Int]] -> [Int] -> Int
