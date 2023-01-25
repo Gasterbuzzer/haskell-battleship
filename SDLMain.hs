@@ -164,8 +164,8 @@ getInfoPixel pixels [x, y] = [infoPixel | [x', y', infoPixel] <- pixels, x' == x
 eventMain :: [Event String] -> MyState -> (ListFrame, MyState)
 eventMain events (x, y, cursorColor, mode, frameMode) = ((toFrameList dim helloTextPixel state'), state')
                 where
-                  state'  | length(events) > 0 = ([ trace (show (getKeyDataTuples (read ev :: KeyState))) (x, y, mode, 0)  | (Event mod ev) <- events, mod == "SDL_KEY_DATA"] !! 0)
-                          | otherwise          = (x, y, mode, frameMode)
+                  state'  | length(events) > 0 = ([ trace (show (getKeyDataTuples (read ev :: KeyState))) (x, y, cursorColor, mode, 0)  | (Event mod ev) <- events, mod == "SDL_KEY_DATA"] !! 0)
+                          | otherwise          = (x, y, cursorColor, mode, frameMode)
 
                           -- getKeyEventThing(getKeyDataTuples (read ev :: KeyState)) == "W"
                           -- getKeyEventThing(getKeyDataTuples (read ev :: KeyState)) == "UP"
