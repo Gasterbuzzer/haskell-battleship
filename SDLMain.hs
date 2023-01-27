@@ -16,7 +16,7 @@ type MyState = (Int, Int, Int, Int, Int)
 -- Cursor Mode
 -- Gameplay Mode (0-8) (0 == Main Menu/Nothing, 1 == Player One Place Ships, 2 == Player Two Place Ships, 3-4 == Player One Attack, 5-6 == Player Two Attack, 7 == Player One Won, 8 == Player Two won)
 initState :: MyState -- initial state
-initState = (10, 1, 3, 1, 3) -- For Info see type above.
+initState = (10, 1, 2, 1, 3) -- For Info see type above.
 
 -- 0 for x dimension (waagerecht)
 -- 1 for y dimension (senkrecht)
@@ -49,27 +49,30 @@ getButtonDataTuples buttonState =
 
 --      wall dimens   input event  state      new state
 move :: (Int, Int) -> KeyStatus -> MyState -> MyState
-move (xdim, ydim) ("Pressed", "P0_Axis_1_D0", _) (x, y, a, b, c) = (x, ((y - 2) `mod` ydim) + 1, a, b, c)
-move (xdim, ydim) ("Held", "P0_Axis_1_D0", dur) (x, y, a, b, c) = if dur >= 100 then (x, ((y - 2) `mod` ydim) + 1, a, b, c) else (x, y, a, b, c)
-move (xdim, ydim) ("Pressed", "P0_Axis_0_D0", _) (x, y, a, b, c) = (((x - 1) `mod` xdim) + 10, y, a, b, c)
-move (xdim, ydim) ("Held", "P0_Axis_0_D0", dur) (x, y, a, b, c) = if dur >= 100 then (((x - 1) `mod` xdim) + 10, y, a, b, c) else (x, y, a, b, c)
-move (xdim, ydim) ("Pressed", "P0_Axis_1_D1", _) (x, y, a, b, c) = (x, (y `mod` ydim) + 1, a, b, c)
-move (xdim, ydim) ("Held", "P0_Axis_1_D1", dur) (x, y, a, b, c) = if dur >= 100 then (x, (y `mod` ydim) + 1, a, b, c) else (x, y, a, b, c)
-move (xdim, ydim) ("Pressed", "P0_Axis_0_D1", _) (x, y, a, b, c) = (((x + 1) `mod` xdim) + 10, y, a, b, c)
-move (xdim, ydim) ("Held", "P0_Axis_0_D1", dur) (x, y, a, b, c) = if dur >= 100 then (((x + 1) `mod` xdim) + 10, y, a, b, c) else (x, y, a, b, c)
-move (xdim, ydim) ("Pressed", "UP", _) (x, y, a, b, c) = (x, ((y - 2) `mod` ydim) + 1, a, b, c)
-move (xdim, ydim) ("Held", "UP", dur) (x, y, a, b, c) = if dur >= 100 then (x, ((y - 2) `mod` ydim) + 1, a, b, c) else (x, y, a, b, c)
-move (xdim, ydim) ("Pressed", "LEFT", _) (x, y, a, b, c) = (((x - 1) `mod` xdim) + 10, y, a, b, c)
-move (xdim, ydim) ("Held", "LEFT", dur) (x, y, a, b, c) = if dur >= 100 then (((x - 1) `mod` xdim) + 10, y, a, b, c) else (x, y, a, b, c)
-move (xdim, ydim) ("Pressed", "DOWN", _) (x, y, a, b, c) = (x, (y `mod` ydim) + 1, a, b, c)
-move (xdim, ydim) ("Held", "DOWN", dur) (x, y, a, b, c) = if dur >= 100 then (x, (y `mod` ydim) + 1, a, b, c) else (x, y, a, b, c)
-move (xdim, ydim) ("Pressed", "RIGHT", _) (x, y, a, b, c) = (((x + 1) `mod` xdim) + 10, y, a, b, c)
-move (xdim, ydim) ("Held", "RIGHT", dur) (x, y, a, b, c) = if dur >= 100 then (((x + 1) `mod` xdim) + 10, y, a, b, c) else (x, y, a, b, c)
-move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, 4, b, c) = (x, y, 3, b, c)
-move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, 3, b, c) = (x, y, 4, b, c)
+move (xdim, ydim) ("Pressed", "P0_Axis_1_D0", _) (x, y, a, b, c) = (x, ((y - 2) `mod` ydim) + 1, 2, b, c)
+move (xdim, ydim) ("Held", "P0_Axis_1_D0", dur) (x, y, a, b, c) = if dur >= 100 then (x, ((y - 2) `mod` ydim) + 1, 2, b, c) else (x, y, 2, b, c)
+move (xdim, ydim) ("Pressed", "P0_Axis_0_D0", _) (x, y, a, b, c) = (((x - 1) `mod` xdim) + 10, y, 2, b, c)
+move (xdim, ydim) ("Held", "P0_Axis_0_D0", dur) (x, y, a, b, c) = if dur >= 100 then (((x - 1) `mod` xdim) + 10, y, 2, b, c) else (x, y, 2, b, c)
+move (xdim, ydim) ("Pressed", "P0_Axis_1_D1", _) (x, y, a, b, c) = (x, (y `mod` ydim) + 1, 2, b, c)
+move (xdim, ydim) ("Held", "P0_Axis_1_D1", dur) (x, y, a, b, c) = if dur >= 100 then (x, (y `mod` ydim) + 1, 2, b, c) else (x, y, 2, b, c)
+move (xdim, ydim) ("Pressed", "P0_Axis_0_D1", _) (x, y, a, b, c) = (((x + 1) `mod` xdim) + 10, y, 2, b, c)
+move (xdim, ydim) ("Held", "P0_Axis_0_D1", dur) (x, y, a, b, c) = if dur >= 100 then (((x + 1) `mod` xdim) + 10, y, 2, b, c) else (x, y, 2, b, c)
+move (xdim, ydim) ("Pressed", "UP", _) (x, y, a, b, c) = (x, ((y - 2) `mod` ydim) + 1, 2, b, c)
+move (xdim, ydim) ("Held", "UP", dur) (x, y, a, b, c) = if dur >= 100 then (x, ((y - 2) `mod` ydim) + 1, 2, b, c) else (x, y, 2, b, c)
+move (xdim, ydim) ("Pressed", "LEFT", _) (x, y, a, b, c) = (((x - 1) `mod` xdim) + 10, y, 2, b, c)
+move (xdim, ydim) ("Held", "LEFT", dur) (x, y, a, b, c) = if dur >= 100 then (((x - 1) `mod` xdim) + 10, y, 2, b, c) else (x, y, 2, b, c)
+move (xdim, ydim) ("Pressed", "DOWN", _) (x, y, a, b, c) = (x, (y `mod` ydim) + 1, 2, b, c)
+move (xdim, ydim) ("Held", "DOWN", dur) (x, y, a, b, c) = if dur >= 100 then (x, (y `mod` ydim) + 1, 2, b, c) else (x, y, 2, b, c)
+move (xdim, ydim) ("Pressed", "RIGHT", _) (x, y, a, b, c) = (((x + 1) `mod` xdim) + 10, y, 2, b, c)
+move (xdim, ydim) ("Held", "RIGHT", dur) (x, y, a, b, c) = if dur >= 100 then (((x + 1) `mod` xdim) + 10, y, 2, b, c) else (x, y, 2, b, c)
+move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, a, b, c) = (x, y, check (x,y,a,b,c) one, b, c)
+--move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, 0, b, c) = (x, y, 1, b, c)
 move (xdim, ydim) ("Pressed", "SPACE", _) (x, y, a, 0, c) = (x, y, a, 1, c)
 move (xdim, ydim) ("Pressed", "SPACE", _) (x, y, a, 1, c) = (x, y, a, 0, c)
 move _ _ (x, y, a, b, c) = (x, y, a, b, c)
+
+check :: MyState -> [[[Int]]] -> Int
+check (x',y',a,b,c) xxs = length[1 | xs <- concat xxs, head xs == x' && xs !! 1 == y']
 
 
 ----------------------------------------------------------------------------------
