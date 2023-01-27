@@ -75,7 +75,7 @@ check :: MyState -> [[[Int]]] -> Int
 check (x',y',a,b,c, attacks) xxs = length[1 | xs <- concat xxs, head xs == x' && xs !! 1 == y']
 
 addShip :: MyState -> [[Int]]
-addShip (x',y',a,b,c,attacks) = [[x',y',check (x,y,a,b,c,attacks) one]] ++ attacks
+addShip (x',y',a,b,c,attacks) = [[x',y',check (x',y',a,b,c,attacks) one]] ++ attacks
 
 
 ----------------------------------------------------------------------------------
