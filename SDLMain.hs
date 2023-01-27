@@ -65,7 +65,7 @@ move (xdim, ydim) ("Pressed", "DOWN", _) (x, y, a, b, c, attacks) = (x, (y `mod`
 move (xdim, ydim) ("Held", "DOWN", dur) (x, y, a, b, c, attacks) = if dur >= 100 then (x, (y `mod` ydim) + 1, 2, b, c, attacks) else (x, y, 2, b, c, attacks)
 move (xdim, ydim) ("Pressed", "RIGHT", _) (x, y, a, b, c, attacks) = (((x + 1) `mod` xdim) + 10, y, 2, b, c, attacks)
 move (xdim, ydim) ("Held", "RIGHT", dur) (x, y, a, b, c, attacks) = if dur >= 100 then (((x + 1) `mod` xdim) + 10, y, 2, b, c, attacks) else (x, y, 2, b, c, attacks)
-move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, a, b, c, attacks) = (x, y, check (x,y,a,b,c, attacks) one, b, c, attacks)
+move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, a, b, c, attacks) = (x, y, check (x,y,a,b,c, attacks) one, b, c, addShip (x,y,a,b,c,attacks))
 --move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, 0, b, c, attacks) = (x, y, 1, b, c, attacks)
 move (xdim, ydim) ("Pressed", "SPACE", _) (x, y, a, b, 0, attacks) = (x, y, a, b, 1, attacks)
 move (xdim, ydim) ("Pressed", "SPACE", _) (x, y, a, b, 1, attacks) = (x, y, a, b, 0, attacks)
@@ -73,6 +73,9 @@ move _ _ (x, y, a, b, c, attacks) = (x, y, a, b, c, attacks)
 
 check :: MyState -> [[[Int]]] -> Int
 check (x',y',a,b,c, attacks) xxs = length[1 | xs <- concat xxs, head xs == x' && xs !! 1 == y']
+
+addShip :: MyState -> [[Int]]
+addShip (x',y',a,b,c,attacks) = [[x',y',check (x,y,a,b,c,attacks) one]] ++ attacks
 
 
 ----------------------------------------------------------------------------------
