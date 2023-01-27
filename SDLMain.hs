@@ -67,8 +67,8 @@ move (xdim, ydim) ("Pressed", "RIGHT", _) (x, y, a, b, c) = (((x + 1) `mod` xdim
 move (xdim, ydim) ("Held", "RIGHT", dur) (x, y, a, b, c) = if dur >= 100 then (((x + 1) `mod` xdim) + 10, y, 2, b, c) else (x, y, 2, b, c)
 move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, a, b, c) = (x, y, check (x,y,a,b,c) one, b, c)
 --move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, 0, b, c) = (x, y, 1, b, c)
-move (xdim, ydim) ("Pressed", "SPACE", _) (x, y, a, 0, c) = (x, y, a, 1, c)
-move (xdim, ydim) ("Pressed", "SPACE", _) (x, y, a, 1, c) = (x, y, a, 0, c)
+move (xdim, ydim) ("Pressed", "SPACE", _) (x, y, a, b, 0) = (x, y, a, b, 1)
+move (xdim, ydim) ("Pressed", "SPACE", _) (x, y, a, b, 1) = (x, y, a, b, 0)
 move _ _ (x, y, a, b, c) = (x, y, a, b, c)
 
 check :: MyState -> [[[Int]]] -> Int
