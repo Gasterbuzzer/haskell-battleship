@@ -72,7 +72,9 @@ move (xdim, ydim) ("Pressed", "SPACE", _) (x, y, a, b, 1, attacks) = (x, y, a, b
 move _ _ (x, y, a, b, c, attacks) = (x, y, a, b, c, attacks)
 
 check :: MyState -> [[[Int]]] -> Int
-check (x',y',a,b,c, attacks) xxs = length[1 | xs <- concat xxs, head xs == x' && xs !! 1 == y']
+check (x',y',a,b,c, attacks) xxs |length (helper (x',y',a,b,c,attacks) xxs) == 1 = 1
+                                 | otherwise = 4
+    where helper (x',y',a,b,c,attacks) xxs = [1 | xs <- concat xxs, head xs == x' && xs !! 1 == y']
 
 addShip :: MyState -> [[Int]]
 addShip (x',y',a,b,c,attacks) = [[x',y',check (x',y',a,b,c,attacks) one]] ++ attacks
