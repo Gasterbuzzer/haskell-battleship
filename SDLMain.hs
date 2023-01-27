@@ -118,9 +118,9 @@ toFrameList (xdim, ydim) pixels (xC, yC, cursorColor, cursorMode, level, attacks
           3 -> (Pixel 255 132 0) -- Orange
           4 -> (Pixel 0 255 98) -- Green
           5 -> (Pixel 145 71 54) -- Brown
-  1 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) one)++levelHudBorders) (xC, yC, cursorColor, cursorMode, 0, attacks)
-  2 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) two)++levelHudBorders) (xC, yC, cursorColor, cursorMode, 0, attacks)
-  3 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) three)++levelHudBorders) (xC, yC, cursorColor, cursorMode, 0, attacks)
+  1 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders) (xC, yC, cursorColor, cursorMode, 0, attacks)
+  2 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders) (xC, yC, cursorColor, cursorMode, 0, attacks)
+  3 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders) (xC, yC, cursorColor, cursorMode, 0, attacks)
 
 getInfoPixel :: [[Int]] -> [Int] -> Int
 getInfoPixel pixels [x, y] = [infoPixel | [x', y', infoPixel] <- pixels, x' == x, y' == y] !! 0
@@ -197,7 +197,7 @@ rotation _ = error "mhh something went wrong"
 ----------------------------------------------------------------------------------
 
 convertLevelPixel :: (Int, Int) -> [[[Int]]] -> [[Int]]
-convertLevelPixel dim level = [ [xS, yS, 2] | ship <- level, [xS, yS] <- ship]
+convertLevelPixel dim level = [ [xS, yS, color] | ship <- level, [xS, yS, color] <- ship]
 
 ----------------------------------------------------------------------------------
 -- Configuration
