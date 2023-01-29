@@ -7,6 +7,9 @@ import Network.MateLight.Simple
 import qualified Network.Socket as Sock
 import SDLEventProvider.SDLKeyEventProvider
 
+-- New Imports
+import Data.List
+
 --                status  key     time
 type KeyStatus = (String, String, Integer)
 
@@ -15,8 +18,9 @@ type MyState = (Int, Int, Int, Int, Int, [[Int]])
 -- Color Cursor
 -- Cursor Mode
 -- Gameplay Mode (0-8) (0 == Main Menu/Nothing, 1 == Player One Place Ships, 2 == Player Two Place Ships, 3-4 == Player One Attack, 5-6 == Player Two Attack, 7 == Player One Won, 8 == Player Two won)
+-- List containing all ship attack positions.
 initState :: MyState -- initial state
-initState = (10, 1, 2, 1, 3, [[]]) -- For Info see type above.
+initState = (10, 1, 2, 1, 1, [[]]) -- For Info see type above.
 
 -- 0 for x dimension (waagerecht)
 -- 1 for y dimension (senkrecht)
@@ -65,8 +69,10 @@ move (xdim, ydim) ("Pressed", "DOWN", _) (x, y, a, b, c, attacks) = (x, (y `mod`
 move (xdim, ydim) ("Held", "DOWN", dur) (x, y, a, b, c, attacks) = if dur >= 100 then (x, (y `mod` ydim) + 1, 2, b, c, attacks) else (x, y, 2, b, c, attacks)
 move (xdim, ydim) ("Pressed", "RIGHT", _) (x, y, a, b, c, attacks) = (((x + 1) `mod` xdim) + 10, y, 2, b, c, attacks)
 move (xdim, ydim) ("Held", "RIGHT", dur) (x, y, a, b, c, attacks) = if dur >= 100 then (((x + 1) `mod` xdim) + 10, y, 2, b, c, attacks) else (x, y, 2, b, c, attacks)
-move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, a, b, c, attacks) = (x, y, check (x,y,a,b,c, attacks) one, b, c, addShip (x,y,a,b,c,attacks))
+
+move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, cursorMode, currentLevel, attacks) = (x, y, check (x, y, cursorColor, cursorMode, currentLevel, attacks) (convertNumberLevel currentLevel), cursorMode, (increaseCurrentLevel currentLevel (checkIfLevelFinished (convertNumberLevel currentLevel) (0, 0, 0, 0, currentLevel, (addShip (x, y, cursorColor, cursorMode, currentLevel, attacks))))), (shouldIEmpty (addShip (x, y, cursorColor, cursorMode, currentLevel, attacks)) (checkIfLevelFinished (convertNumberLevel currentLevel) (0, 0, 0, 0, currentLevel, (addShip (x, y, cursorColor, cursorMode, currentLevel, attacks))))))
 --move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, 0, b, c, attacks) = (x, y, 1, b, c, attacks)
+
 move (xdim, ydim) ("Pressed", "SPACE", _) (x, y, a, b, 0, attacks) = (x, y, a, b, 1, attacks)
 move (xdim, ydim) ("Pressed", "SPACE", _) (x, y, a, b, 1, attacks) = (x, y, a, b, 0, attacks)
 move _ _ (x, y, a, b, c, attacks) = (x, y, a, b, c, attacks)
@@ -77,7 +83,7 @@ check (x',y',a,b,c, attacks) xxs |length (helper (x',y',a,b,c,attacks) xxs) == 1
     where helper (x',y',a,b,c,attacks) xxs = [1 | xs <- concat xxs, head xs == x' && xs !! 1 == y']
 
 addShip :: MyState -> [[Int]]
-addShip (x',y',a,b,c,attacks) = [[x',y',check (x',y',a,b,c,attacks) one]] ++ attacks
+addShip (x', y', a, b, currentLevel, attacks) = [[x',y',check (x', y', a, b, currentLevel, attacks) (convertNumberLevel currentLevel)]] ++ attacks
 
 
 ----------------------------------------------------------------------------------
@@ -120,9 +126,10 @@ toFrameList (xdim, ydim) pixels (xC, yC, cursorColor, cursorMode, level, attacks
           3 -> (Pixel 255 132 0) -- Orange
           4 -> (Pixel 0 255 98) -- Green
           5 -> (Pixel 145 71 54) -- Brown
-  1 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders) (xC, yC, cursorColor, cursorMode, 0, attacks)
-  2 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders) (xC, yC, cursorColor, cursorMode, 0, attacks)
-  3 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders) (xC, yC, cursorColor, cursorMode, 0, attacks)
+  1 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(levelShipHud level)) (xC, yC, cursorColor, cursorMode, 0, attacks)
+  2 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(levelShipHud level)) (xC, yC, cursorColor, cursorMode, 0, attacks)
+  3 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(levelShipHud level)) (xC, yC, cursorColor, cursorMode, 0, attacks)
+  _ -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(levelShipHud level)) (xC, yC, cursorColor, cursorMode, 0, attacks)
 
 getInfoPixel :: [[Int]] -> [Int] -> Int
 getInfoPixel pixels [x, y] = [infoPixel | [x', y', infoPixel] <- pixels, x' == x, y' == y] !! 0
@@ -179,6 +186,9 @@ levelHudBorders :: [[Int]]
 levelHudBorders = [[9, y, 5] | y <- [0..10]] ++ [[20, y, 5] | y <- [0..10]] ++ [[x, 0, 5] | x <- [10..20]] ++ [[x, 11, 5] | x <- [9..20]]
 -- levelHudBorders: First part left Side, Second part Right Side, Third Part Top, Fourth Part Bottom
 
+levelShipHud :: Int -> [[Int]]
+levelShipHud levelNumber = [ [(1 + (currentShipSize)), (1 + (shipNumber * 2)), 2] | (shipSize, shipNumber) <- (zip (shipsInLevel levelNumber) [0..]), currentShipSize <- [1..shipSize]]
+
 newShip :: ShipLength -> Rotation -> MyState -> [[Int]]
 newShip 1 _ (x, y, a, b, c, attacks) = [[x,y]]
 newShip n 0 (x, y, a, b, c, attacks) | (x + n - 1) < 20 = newShip (n-1) 0 (x, y, a, b, c, attacks) ++ [[x + n - 1, y]]
@@ -194,12 +204,44 @@ rotation 0 = 1
 rotation 1 = 0
 rotation _ = error "mhh something went wrong"
 
+checkIfLevelFinished :: [[[Int]]] -> MyState -> Bool
+checkIfLevelFinished level (x, y, cursorColor, cursorMode, currentLevel, attacks) = (length(convertLevelPixelLevel dim level)) == (length([ True | [xS, yS, colorS] <- (attacks), elem ([xS, yS]) (convertLevelPixelLevel dim level)]))
+
 ----------------------------------------------------------------------------------
 -- Helper Functions
 ----------------------------------------------------------------------------------
 
 convertLevelPixel :: (Int, Int) -> [[[Int]]] -> [[Int]]
 convertLevelPixel dim level = [ [xS, yS, color] | ship <- level, [xS, yS, color] <- ship]
+
+convertLevelPixelLevel :: (Int, Int) -> [[[Int]]] -> [[Int]]
+convertLevelPixelLevel dim level = [ [xS, yS] | ship <- level, [xS, yS] <- ship]
+
+convertLevelPixelLevelTest :: (Int, Int) -> [[[Int]]] -> [[Int]]
+convertLevelPixelLevelTest dim level = [ [xS, yS, 1] | ship <- level, [xS, yS] <- ship]
+
+levelTest :: Bool
+levelTest = checkIfLevelFinished one (0, 0, 0, 0, 0, (convertLevelPixelLevelTest dim one))
+
+convertNumberLevel :: Int -> [[[Int]]]
+convertNumberLevel number | number == 1 = one
+                          | number == 2 = two
+                          | number == 3 = three
+                          | otherwise = one
+
+emptyAttack :: [[Int]]
+emptyAttack = [[]]
+
+increaseCurrentLevel :: Int -> Bool -> Int
+increaseCurrentLevel levelNumber finishedBool | finishedBool = (levelNumber + 1)
+                                              | otherwise = levelNumber
+
+shouldIEmpty :: [[Int]] -> Bool -> [[Int]]
+shouldIEmpty attacks finishedBool | finishedBool = emptyAttack
+                                  | otherwise = attacks
+
+shipsInLevel :: Int -> [Int]
+shipsInLevel levelNumber = sort [ length(ship) | ship <- (convertNumberLevel(levelNumber))]
 
 ----------------------------------------------------------------------------------
 -- Configuration
