@@ -192,7 +192,7 @@ levelHudBorders = [[9, y, 5] | y <- [0..10]] ++ [[20, y, 5] | y <- [0..10]] ++ [
 -- levelHudBorders: First part left Side, Second part Right Side, Third Part Top, Fourth Part Bottom
 
 levelShipHud :: Int -> [[Int]] -> [[Int]]
-levelShipHud levelNumber attack = [ [(1 + (currentShipSize)), (1 + (shipNumber * 2)), 2] | (shipSize, shipNumber) <- (zip (menuShipControl attack (convertNumberLevel levelNumber)) [0..]), currentShipSize <- [1..shipSize]]
+levelShipHud levelNumber attack = [ [(1 + (currentShipSize)), (1 + (shipNumber * 2)), 2] | (shipSize, shipNumber) <- (zip (menuShipControl attack (convertNumberLevel levelNumber)) [0..]), currentShipSize <- [1..shipSize]]           ++           [ [(1 + (currentShipSize)), ( (length((menuShipControl attack (convertNumberLevel levelNumber)))*2) + (shipNumber * 2)), 1] | (shipSize, shipNumber) <- (zip (menuShipControl attack (convertNumberLevel levelNumber)) [0..]), currentShipSize <- [1..shipSize]]
 
 newShip :: ShipLength -> Rotation -> MyState -> [[Int]]
 newShip 1 _ (x, y, a, b, c, attacks) = [[x,y]]
@@ -265,6 +265,15 @@ menuShipControl xxs yys = controlEach (nub xxs) yys
     where controlEach xxs [] = []
           controlEach xxs (y:ys) | [ys | ys <- y, [x'',y'',color] <- xxs, ys == [x'',y'']] == y = controlEach xxs ys
                                  | otherwise = length y : controlEach xxs ys
+
+removeItem :: Int -> [Int] -> [Int]
+removeItem _ []                 = []
+removeItem x (y:ys) | x == y    = removeItem x ys
+                    | otherwise = y : removeItem x ys
+
+removeItemList :: [Int] -> [Int] -> Int -> [Int]
+removeItemList elements listRemove elementAmount | elementAmount <= 0 = listRemove
+                                                 | otherwise          = removeItemList (tail elements) (removeItem (head elements) listRemove) (elementAmount-1)
 ----------------------------------------------------------------------------------
 -- Configuration
 ----------------------------------------------------------------------------------
