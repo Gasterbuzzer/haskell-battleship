@@ -19,7 +19,7 @@ The used data type for events is "KeyStatus" which is used for formatting our gi
 There are multiple interconnecting functions which help bring our game to life.
 Our life blood is our function "toFrameList" which takes the dimensions of our screen, the pixels to draw and our current gamestate as a "MyState" data type. This will then call all other respective functions for drawing the field.
 Then we have the "move" function which evaluates the given Input and transform the given "MyState" to the updated "MyState" which takes the given event and calls the according functions.
-Importantly aswell are the different levels, these are stored as triple list containing an x and y position. These represent the different levels.
+Importantly aswell are the different levels, these are stored as triple lists containing an x and y position. These represent the different levels.
 Most of the rest used functions are used as helper functions, examples of these are: checking if the player has won by going through the list of hit ships (checkIfLevelFinished), checking which ships to draw at the left side of the game field (levelShipHud) and helper functions of helper functions such as (menuShipControl) which takes the list of past attacks and the current level and returns all missing ships.
 
 ## Installation
@@ -37,7 +37,7 @@ Similarly to the local installation, just might need to change the given IP Addr
 ### Gameplay instructions
 
 #### Playing the game/How is the user supposed to interact?
-After starting the game the player can start to try to hit the ship, by using the arrow keys &#8592; &#8593; &#8594; &#8595; to navigate to the field he intends to hit. The selection can be confirmed by hitting `Enter`. To the right of the playing field is information on which ships are already sunken. The Color doesn't change until all fields of the ship has been hit, so that the payer cannot see to which ship the part belongs which he has hitten so far.
+After starting the game the player can start to try to hit the ship, by using the arrow keys &#8592; &#8593; &#8594; &#8595; to navigate to the field he intends to hit. The selection can be confirmed by hitting `Enter`. To the left of the playing field is information on which ships are already sunken. The Color doesn't change until all fields of the ship has been hit, so that the payer cannot see to which ship the part belongs which he has hitten so far.
 If no ships have been hit, the colour will change to <span style="color:darkblue">Dark Blue</span>.\
 If a ship has been hit, the colour of the field will change to <span style="color:red">Red</span>.\
 Once a ship has been sunk, all its fields will turn <span style="color:red">Red</span> in the HUD.
