@@ -77,8 +77,6 @@ move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, cursorMode, curre
                                                                                                      (increaseCurrentLevel currentLevel (checkIfLevelFinished (convertNumberLevel currentLevel) (0, 0, 0, 0, currentLevel, (addShip (x, y, cursorColor, cursorMode, currentLevel, attacks))))),
                                                                                                      (shouldIEmpty (addShip (x, y, cursorColor, cursorMode, currentLevel, attacks)) (checkIfLevelFinished (convertNumberLevel currentLevel) (0, 0, 0, 0, currentLevel, (addShip (x, y, cursorColor, cursorMode, currentLevel, attacks))))))
 
-move (xdim, ydim) ("Pressed", "SPACE", _) (x, y, a, b, 0, attacks) = (x, y, a, b, 1, attacks)
-move (xdim, ydim) ("Pressed", "SPACE", _) (x, y, a, b, 1, attacks) = (x, y, a, b, 0, attacks)
 move _ _ (x, y, a, b, c, attacks) = (x, y, a, b, c, attacks)
 
 check :: MyState -> [[[Int]]] -> Int
@@ -127,7 +125,7 @@ toFrameList (xdim, ydim) pixels (xC, yC, cursorColor, cursorMode, level, attacks
           1 -> (Pixel 255 0 0) -- Red
           2 -> (Pixel 120 120 120) -- Grey
           3 -> (Pixel 255 132 0) -- Orange
-          4 -> (Pixel 0 255 98) -- Green
+          4 -> (Pixel 21 0 255) -- Dark Blue
           5 -> (Pixel 145 71 54) -- Brown
           6 -> (Pixel 234 255 0) -- Yellow
   1 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(levelShipHud level attacks)) (xC, yC, cursorColor, cursorMode, 0, attacks)
