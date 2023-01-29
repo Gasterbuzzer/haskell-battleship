@@ -20,7 +20,7 @@ type MyState = (Int, Int, Int, Int, Int, [[Int]], [[Int]])
 -- Gameplay Mode (0-8) (0 == Main Menu/Nothing, 1 == Player One Place Ships, 2 == Player Two Place Ships, 3-4 == Player One Attack, 5-6 == Player Two Attack, 7 == Player One Won, 8 == Player Two won)
 -- List containing all ship attack positions.
 initState :: MyState -- initial state
-initState = (10, 1, 2, 1, 1, [[]], [[]]) -- For Info see type above.
+initState = (3, 1, 2, 0, 1, [[]], [[]]) -- For Info see type above.
 
 -- 0 for x dimension (waagerecht)
 -- 1 for y dimension (senkrecht)
@@ -53,32 +53,62 @@ getButtonDataTuples buttonState =
 
 --      wall dimens   input event  state      new state
 move :: (Int, Int) -> KeyStatus -> MyState -> MyState
-move (xdim, ydim) ("Pressed", "P0_Axis_1_D0", _) (x, y, a, b, c, attacks, attacks2) = (x, ((y - 2) `mod` ydim) + 1, 2, b, c, attacks, attacks2)
-move (xdim, ydim) ("Held", "P0_Axis_1_D0", dur) (x, y, a, b, c, attacks, attacks2) = if dur >= 100 then (x, ((y - 2) `mod` ydim) + 1, 2, b, c, attacks, attacks2) else (x, y, 2, b, c, attacks, attacks2)
-move (xdim, ydim) ("Pressed", "P0_Axis_0_D0", _) (x, y, a, b, c, attacks, attacks2) = (((x - 1) `mod` xdim) + 10, y, 2, b, c, attacks, attacks2)
-move (xdim, ydim) ("Held", "P0_Axis_0_D0", dur) (x, y, a, b, c, attacks, attacks2) = if dur >= 100 then (((x - 1) `mod` xdim) + 10, y, 2, b, c, attacks, attacks2) else (x, y, 2, b, c, attacks, attacks2)
-move (xdim, ydim) ("Pressed", "P0_Axis_1_D1", _) (x, y, a, b, c, attacks, attacks2) = (x, (y `mod` ydim) + 1, 2, b, c, attacks, attacks2)
-move (xdim, ydim) ("Held", "P0_Axis_1_D1", dur) (x, y, a, b, c, attacks, attacks2) = if dur >= 100 then (x, (y `mod` ydim) + 1, 2, b, c, attacks, attacks2) else (x, y, 2, b, c, attacks, attacks2)
-move (xdim, ydim) ("Pressed", "P0_Axis_0_D1", _) (x, y, a, b, c, attacks, attacks2) = (((x + 1) `mod` xdim) + 10, y, 2, b, c, attacks, attacks2)
-move (xdim, ydim) ("Held", "P0_Axis_0_D1", dur) (x, y, a, b, c, attacks, attacks2) = if dur >= 100 then (((x + 1) `mod` xdim) + 10, y, 2, b, c, attacks, attacks2) else (x, y, 2, b, c, attacks, attacks2)
-move (xdim, ydim) ("Pressed", "UP", _) (x, y, a, b, c, attacks, attacks2) = (x, ((y - 2) `mod` ydim) + 1, 2, b, c, attacks, attacks2)
-move (xdim, ydim) ("Held", "UP", dur) (x, y, a, b, c, attacks, attacks2) = if dur >= 100 then (x, ((y - 2) `mod` ydim) + 1, 2, b, c, attacks, attacks2) else (x, y, 2, b, c, attacks, attacks2)
-move (xdim, ydim) ("Pressed", "LEFT", _) (x, y, a, b, c, attacks, attacks2) = (((x - 1) `mod` xdim) + 10, y, 2, b, c, attacks, attacks2)
-move (xdim, ydim) ("Held", "LEFT", dur) (x, y, a, b, c, attacks, attacks2) = if dur >= 100 then (((x - 1) `mod` xdim) + 10, y, 2, b, c, attacks, attacks2) else (x, y, 2, b, c, attacks, attacks2)
-move (xdim, ydim) ("Pressed", "DOWN", _) (x, y, a, b, c, attacks, attacks2) = (x, (y `mod` ydim) + 1, 2, b, c, attacks, attacks2)
-move (xdim, ydim) ("Held", "DOWN", dur) (x, y, a, b, c, attacks, attacks2) = if dur >= 100 then (x, (y `mod` ydim) + 1, 2, b, c, attacks, attacks2) else (x, y, 2, b, c, attacks, attacks2)
-move (xdim, ydim) ("Pressed", "RIGHT", _) (x, y, a, b, c, attacks, attacks2) = (((x + 1) `mod` xdim) + 10, y, 2, b, c, attacks, attacks2)
-move (xdim, ydim) ("Held", "RIGHT", dur) (x, y, a, b, c, attacks, attacks2) = if dur >= 100 then (((x + 1) `mod` xdim) + 10, y, 2, b, c, attacks, attacks2) else (x, y, 2, b, c, attacks, attacks2)
+move (xdim, ydim) ("Pressed", "P0_Axis_1_D0", _) (x, y, a, 0, c, attacks, attacks2) = (x, ((y - 2) `mod` ydim) + 1, 2, 0, c, attacks, attacks2)
+move (xdim, ydim) ("Held", "P0_Axis_1_D0", dur) (x, y, a, 0, c, attacks, attacks2) = if dur >= 100 then (x, ((y - 2) `mod` ydim) + 1, 2, 0, c, attacks, attacks2) else (x, y, 2, 0, c, attacks, attacks2)
+move (xdim, ydim) ("Pressed", "P0_Axis_0_D0", _) (x, y, a, 0, c, attacks, attacks2) = (if x > 10 || x < 5 then ((x - 1) `mod` xdim) + 10 else (x - 1) `mod` xdim, y, 2, 0, c, attacks, attacks2)
+move (xdim, ydim) ("Held", "P0_Axis_0_D0", dur) (x, y, a, 0, c, attacks, attacks2) = if dur >= 100 then (if x > 10 || x < 5 then ((x - 1) `mod` xdim) + 10 else (x - 1) `mod` xdim, y, 2, 0, c, attacks, attacks2) else (x, y, 2, 0, c, attacks, attacks2)
+move (xdim, ydim) ("Pressed", "P0_Axis_1_D1", _) (x, y, a, 0, c, attacks, attacks2) = (x, (y `mod` ydim) + 1, 2, 0, c, attacks, attacks2)
+move (xdim, ydim) ("Held", "P0_Axis_1_D1", dur) (x, y, a, 0, c, attacks, attacks2) = if dur >= 100 then (x, (y `mod` ydim) + 1, 2, 0, c, attacks, attacks2) else (x, y, 2, 0, c, attacks, attacks2)
+move (xdim, ydim) ("Pressed", "P0_Axis_0_D1", _) (x, y, a, 0, c, attacks, attacks2) = (if x < 9 || x == 12 then (x + 1) `mod` xdim else ((x + 1) `mod` xdim) + 10, y, 2, 0, c, attacks, attacks2)
+move (xdim, ydim) ("Held", "P0_Axis_0_D1", dur) (x, y, a, 0, c, attacks, attacks2) = if dur >= 100 then (if x < 9 || x == 12 then (x + 1) `mod` xdim else ((x + 1) `mod` xdim) + 10, y, 2, 0, c, attacks, attacks2) else (x, y, 2, 0, c, attacks, attacks2)
+move (xdim, ydim) ("Pressed", "UP", _) (x, y, a, 0, c, attacks, attacks2) = (x, ((y - 2) `mod` ydim) + 1, 2, 0, c, attacks, attacks2)
+move (xdim, ydim) ("Held", "UP", dur) (x, y, a, 0, c, attacks, attacks2) = if dur >= 100 then (x, ((y - 2) `mod` ydim) + 1, 2, 0, c, attacks, attacks2) else (x, y, 2, 0, c, attacks, attacks2)
+move (xdim, ydim) ("Pressed", "LEFT", _) (x, y, a, 0, c, attacks, attacks2) = (if x > 10 || x < 5 then ((x - 1) `mod` xdim) + 10 else (x - 1) `mod` xdim, y, 2, 0, c, attacks, attacks2)
+move (xdim, ydim) ("Held", "LEFT", dur) (x, y, a, 0, c, attacks, attacks2) = if dur >= 100 then (if x > 10 || x < 5 then ((x - 1) `mod` xdim) + 10 else (x - 1) `mod` xdim, y, 2, 0, c, attacks, attacks2) else (x, y, 2, 0, c, attacks, attacks2)
+move (xdim, ydim) ("Pressed", "DOWN", _) (x, y, a, 0, c, attacks, attacks2) = (x, (y `mod` ydim) + 1, 2, 0, c, attacks, attacks2)
+move (xdim, ydim) ("Held", "DOWN", dur) (x, y, a, 0, c, attacks, attacks2) = if dur >= 100 then (x, (y `mod` ydim) + 1, 2, 0, c, attacks, attacks2) else (x, y, 2, 0, c, attacks, attacks2)
+move (xdim, ydim) ("Pressed", "RIGHT", _) (x, y, a, 0, c, attacks, attacks2) = (if x < 9 || x == 12 then (x + 1) `mod` xdim else ((x + 1) `mod` xdim) + 10, y, 2, 0, c, attacks, attacks2)
+move (xdim, ydim) ("Held", "RIGHT", dur) (x, y, a, 0, c, attacks, attacks2) = if dur >= 100 then (if x < 9 || x == 12 then (x + 1) `mod` xdim else ((x + 1) `mod` xdim) + 10, y, 2, 0, c, attacks, attacks2) else (x, y, 2, 0, c, attacks, attacks2)
 
-move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2) = (x,
+move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 0, currentLevel, attacks, attacks2) = (x,
                                                                                                      y,
-                                                                                                     check (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2) (convertNumberLevel currentLevel),
-                                                                                                     cursorMode,
-                                                                                                     (increaseCurrentLevel currentLevel (checkIfLevelFinished (convertNumberLevel currentLevel) (0, 0, 0, 0, currentLevel, (addShip (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2)), attacks2))),
-                                                                                                     (shouldIEmpty (addShip (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2)) (checkIfLevelFinished (convertNumberLevel currentLevel) (0, 0, 0, 0, currentLevel, (addShip (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2)), attacks2))),
+                                                                                                     check (x, y, cursorColor, 0, currentLevel, attacks, attacks2) (convertNumberLevel currentLevel),
+                                                                                                     0,
+                                                                                                     (increaseCurrentLevel currentLevel (checkIfLevelFinished (convertNumberLevel currentLevel) (0, 0, 0, 0, currentLevel, (addShip (x, y, cursorColor, 0, currentLevel, attacks, attacks2)), attacks2))),
+                                                                                                     (shouldIEmpty (addShip (x, y, cursorColor, 0, currentLevel, attacks, attacks2)) (checkIfLevelFinished (convertNumberLevel currentLevel) (0, 0, 0, 0, currentLevel, (addShip (x, y, cursorColor, 0, currentLevel, attacks, attacks2)), attacks2))),
                                                                                                      attacks2)
 
+move (xdim, ydim) ("Pressed", "P0_Axis_1_D0", _) (x, y, a, 1, c, attacks, attacks2) = (x, ((y - 2) `mod` ydim) + 1, 2, 1, c, attacks, attacks2)
+move (xdim, ydim) ("Held", "P0_Axis_1_D0", dur) (x, y, a, 1, c, attacks, attacks2) = if dur >= 100 then (x, ((y - 2) `mod` ydim) + 1, 2, 1, c, attacks, attacks2) else (x, y, 2, 1, c, attacks, attacks2)
+move (xdim, ydim) ("Pressed", "P0_Axis_0_D0", _) (x, y, a, 1, c, attacks, attacks2) = (if x > 20 || x == 17 then ((x - 1) `mod` xdim) + 20 else ((x - 1) `mod` xdim) + 10, y, 2, 1, c, attacks, attacks2)
+move (xdim, ydim) ("Held", "P0_Axis_0_D0", dur) (x, y, a, 1, c, attacks, attacks2) = if dur >= 100 then (if x > 20 || x == 17 then ((x - 1) `mod` xdim) + 20 else ((x - 1) `mod` xdim) + 10, y, 2, 1, c, attacks, attacks2) else (x, y, 2, 1, c, attacks, attacks2)
+move (xdim, ydim) ("Pressed", "P0_Axis_1_D1", _) (x, y, a, 1, c, attacks, attacks2) = (x, (y `mod` ydim) + 1, 2, 1, c, attacks, attacks2)
+move (xdim, ydim) ("Held", "P0_Axis_1_D1", dur) (x, y, a, 1, c, attacks, attacks2) = if dur >= 100 then (x, (y `mod` ydim) + 1, 2, 1, c, attacks, attacks2) else (x, y, 2, 1, c, attacks, attacks2)
+move (xdim, ydim) ("Pressed", "P0_Axis_0_D1", _) (x, y, a, 1, c, attacks, attacks2) = (if x < 19 || x == 26 then ((x + 1) `mod` xdim) + 10 else ((x + 1) `mod` xdim) + 20, y, 2, 1, c, attacks, attacks2)
+move (xdim, ydim) ("Held", "P0_Axis_0_D1", dur) (x, y, a, 1, c, attacks, attacks2) = if dur >= 100 then (if x < 19 || x == 26 then ((x + 1) `mod` xdim) + 10 else ((x + 1) `mod` xdim) + 20, y, 2, 1, c, attacks, attacks2) else (x, y, 2, 1, c, attacks, attacks2)
+move (xdim, ydim) ("Pressed", "UP", _) (x, y, a, 1, c, attacks, attacks2) = (x, ((y - 2) `mod` ydim) + 1, 2, 1, c, attacks, attacks2)
+move (xdim, ydim) ("Held", "UP", dur) (x, y, a, 1, c, attacks, attacks2) = if dur >= 100 then (x, ((y - 2) `mod` ydim) + 1, 2, 1, c, attacks, attacks2) else (x, y, 2, 1, c, attacks, attacks2)
+move (xdim, ydim) ("Pressed", "LEFT", _) (x, y, a, 1, c, attacks, attacks2) = (if x > 20 || x == 17 then ((x - 1) `mod` xdim) + 20 else ((x - 1) `mod` xdim) + 10, y, 2, 1, c, attacks, attacks2)
+move (xdim, ydim) ("Held", "LEFT", dur) (x, y, a, 1, c, attacks, attacks2) = if dur >= 100 then (if x > 20 || x == 17 then ((x - 1) `mod` xdim) + 20 else ((x - 1) `mod` xdim) + 10, y, 2, 1, c, attacks, attacks2) else (x, y, 2, 1, c, attacks, attacks2)
+move (xdim, ydim) ("Pressed", "DOWN", _) (x, y, a, 1, c, attacks, attacks2) = (x, (y `mod` ydim) + 1, 2, 1, c, attacks, attacks2)
+move (xdim, ydim) ("Held", "DOWN", dur) (x, y, a, 1, c, attacks, attacks2) = if dur >= 100 then (x, (y `mod` ydim) + 1, 2, 1, c, attacks, attacks2) else (x, y, 2, 1, c, attacks, attacks2)
+move (xdim, ydim) ("Pressed", "RIGHT", _) (x, y, a, 1, c, attacks, attacks2) = (if x < 19 || x == 26 then ((x + 1) `mod` xdim) + 10 else ((x + 1) `mod` xdim) + 20, y, 2, 1, c, attacks, attacks2)
+move (xdim, ydim) ("Held", "RIGHT", dur) (x, y, a, 1, c, attacks, attacks2) = if dur >= 100 then (if x < 19 || x == 26 then ((x + 1) `mod` xdim) + 10 else ((x + 1) `mod` xdim) + 20, y, 2, 1, c, attacks, attacks2) else (x, y, 2, 1, c, attacks, attacks2)
+
+move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 1, currentLevel, attacks, attacks2) = (x,
+                                                                                                     y,
+                                                                                                     check (x, y, cursorColor, 1, currentLevel, attacks, attacks2) (convertNumberLevel currentLevel),
+                                                                                                     1,
+                                                                                                     (increaseCurrentLevel currentLevel (checkIfLevelFinished (convertNumberLevel currentLevel) (0, 0, 0, 1, currentLevel, (addShip (x, y, cursorColor, 1, currentLevel, attacks, attacks2)), attacks2))),
+                                                                                                     (shouldIEmpty (addShip (x, y, cursorColor, 1, currentLevel, attacks, attacks2)) (checkIfLevelFinished (convertNumberLevel currentLevel) (0, 0, 0, 1, currentLevel, (addShip (x, y, cursorColor, 1, currentLevel, attacks, attacks2)), attacks2))),
+                                                                                                     attacks2)
+
+move (xdim, ydim) ("Pressed", "SPACE", _) (x, y, cursorColor, 0, currentLevel, attacks, attacks2) = (17, 1, cursorColor, 1, currentLevel, attacks, attacks2)
+move (xdim, ydim) ("Pressed", "SPACE", _) (x, y, cursorColor, 1, currentLevel, attacks, attacks2) = (3, 1, cursorColor, 0, currentLevel, attacks, attacks2)
 move _ _ (x, y, a, b, c, attacks, attacks2) = (x, y, a, b, c, attacks, attacks2)
+
+
+
 
 check :: MyState -> [[[Int]]] -> Int
 check (x', y', a, b, c, attacks, attacks2) xxs | length (helper (x', y', a, b, c, attacks, attacks2) xxs) == 1      = 1
