@@ -11,8 +11,13 @@ The game uses a 10x10 coordinate system as the playing field. Once you start the
 
 ## Installation
 ### Locally
+Use SDLMain.hs in the given ZIP as the Main program, if you do not have a ready stack enviorment for the given LED wall, use the provided haskell-battleship-env.zip as your enviorment and follow the steps on the installation of SDL2 (See for reference "sdl2.pdf").
+If you have a ready enviorment, just copy the SDLMain.hs into such, no extra outside dependencies needed.
+
+Then you can execute it happily via the "main" function while in stack ghci.
 
 ### For the university LED wall 
+Similarly to the local installation, just might need to change the given IP Address inside of SDLMain.hs (End of File, in the section "Configuration").
 
 ## Usage
 
