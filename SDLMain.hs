@@ -85,6 +85,10 @@ check (x',y',a,b,c, attacks) xxs |length (helper (x',y',a,b,c,attacks) xxs) == 1
 addShip :: MyState -> [[Int]]
 addShip (x', y', a, b, currentLevel, attacks) = [[x',y',check (x', y', a, b, currentLevel, attacks) (convertNumberLevel currentLevel)]] ++ attacks
 
+menuShipControl :: MyState -> [[[Int]]] -> (Bool, Int)
+menuShipControl (x',y',a,b,c,attacks) xxs = (control_destr (x',y',a,b,c,attacks) xxs,length(getShipList (x',y',a,b,c,attacks) xxs))
+    where control_destr (x',y',a,b,c,attacks) xxs = (getShipList (x',y',a,b,c,attacks) xxs) elem [attacks]
+          getShipList (x',y',a,b,c,attacks) xxs = concat[xs | xs <- xxs, elem True [ True | ys <- xs, head ys == x' && ys !! 1 == y']]
 
 ----------------------------------------------------------------------------------
 -- Frame Functions
