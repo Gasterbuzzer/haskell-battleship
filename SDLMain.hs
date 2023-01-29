@@ -133,6 +133,7 @@ toFrameList (xdim, ydim) pixels (xC, yC, cursorColor, cursorMode, level, attacks
   1 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(levelShipHud level attacks)) (xC, yC, cursorColor, cursorMode, 0, attacks)
   2 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(levelShipHud level attacks)) (xC, yC, cursorColor, cursorMode, 0, attacks)
   3 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(levelShipHud level attacks)) (xC, yC, cursorColor, cursorMode, 0, attacks)
+  4 -> toFrameList (xdim, ydim) (helloTextPixel) (xC, yC, cursorColor, cursorMode, 0, attacks)
   9 -> toFrameList (xdim, ydim) ((levelShipHud 1 [[2,3],[18,3],[18,4],[18,5],[18,6],[18,2], [18,2]])) (xC, yC, cursorColor, cursorMode, 0, attacks)
   _ -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(levelShipHud level attacks)) (xC, yC, cursorColor, cursorMode, 0, attacks)
 
@@ -187,6 +188,13 @@ three = [[[14,6],[15,6],[16,6],[17,6]],
          [[15,1],[15,2]],
          [[10,6],[10,7]]]
 
+fourth :: [[[Int]]]
+fourth = [[[14,6],[15,6],[16,6],[17,6]],
+         [[11,1],[12,1],[13,1]],
+         [[19,8],[19,9],[19,10]],
+         [[15,1],[15,2]],
+         [[10,6],[10,7]]]
+
 levelHudBorders :: [[Int]]
 levelHudBorders = [[9, y, 5] | y <- [0..10]] ++ [[20, y, 5] | y <- [0..10]] ++ [[x, 0, 5] | x <- [10..20]] ++ [[x, 11, 5] | x <- [9..20]]
 -- levelHudBorders: First part left Side, Second part Right Side, Third Part Top, Fourth Part Bottom
@@ -232,6 +240,7 @@ convertNumberLevel :: Int -> [[[Int]]]
 convertNumberLevel number | number == 1 = one
                           | number == 2 = two
                           | number == 3 = three
+                          | number == 4 = fourth
                           | otherwise = one
 
 emptyAttack :: [[Int]]
