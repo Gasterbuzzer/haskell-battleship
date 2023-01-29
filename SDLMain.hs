@@ -76,7 +76,6 @@ move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, cursorMode, curre
                                                                                                      cursorMode,
                                                                                                      (increaseCurrentLevel currentLevel (checkIfLevelFinished (convertNumberLevel currentLevel) (0, 0, 0, 0, currentLevel, (addShip (x, y, cursorColor, cursorMode, currentLevel, attacks))))),
                                                                                                      (shouldIEmpty (addShip (x, y, cursorColor, cursorMode, currentLevel, attacks)) (checkIfLevelFinished (convertNumberLevel currentLevel) (0, 0, 0, 0, currentLevel, (addShip (x, y, cursorColor, cursorMode, currentLevel, attacks))))))
---move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, 0, b, c, attacks) = (x, y, 1, b, c, attacks)
 
 move (xdim, ydim) ("Pressed", "SPACE", _) (x, y, a, b, 0, attacks) = (x, y, a, b, 1, attacks)
 move (xdim, ydim) ("Pressed", "SPACE", _) (x, y, a, b, 1, attacks) = (x, y, a, b, 0, attacks)
@@ -130,10 +129,11 @@ toFrameList (xdim, ydim) pixels (xC, yC, cursorColor, cursorMode, level, attacks
           3 -> (Pixel 255 132 0) -- Orange
           4 -> (Pixel 0 255 98) -- Green
           5 -> (Pixel 145 71 54) -- Brown
+          6 -> (Pixel 234 255 0) -- Yellow
   1 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(levelShipHud level attacks)) (xC, yC, cursorColor, cursorMode, 0, attacks)
   2 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(levelShipHud level attacks)) (xC, yC, cursorColor, cursorMode, 0, attacks)
   3 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(levelShipHud level attacks)) (xC, yC, cursorColor, cursorMode, 0, attacks)
-  4 -> toFrameList (xdim, ydim) (helloTextPixel) (xC, yC, cursorColor, cursorMode, 0, attacks)
+  4 -> toFrameList (xdim, ydim) (endScreenPixel) (xC, yC, cursorColor, cursorMode, 0, attacks)
   9 -> toFrameList (xdim, ydim) ((levelShipHud 1 [[2,3],[18,3],[18,4],[18,5],[18,6],[18,2], [18,2]])) (xC, yC, cursorColor, cursorMode, 0, attacks)
   _ -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(levelShipHud level attacks)) (xC, yC, cursorColor, cursorMode, 0, attacks)
 
@@ -210,8 +210,6 @@ newShip n 1 (x, y, a, b, c, attacks) | (y + n - 1) < 11 = newShip (n-1) 1 (x, y,
                                      | otherwise = error "ship out of map"
 newShip _ _ _ = error "mhh something went wrong"
 
--- if ("Pressed", "SPACE") then rotation n
-
 rotation :: Rotation -> Rotation
 rotation 0 = 1
 rotation 1 = 0
@@ -257,18 +255,6 @@ shouldIEmpty attacks finishedBool | finishedBool = emptyAttack
 shipsInLevel :: Int -> [Int]
 shipsInLevel levelNumber = sort [ length(ship) | ship <- (convertNumberLevel(levelNumber))]
 
---ships levelNumber = (shipsInLevel levelNumber)
-
---helperShip :: MyState -> Int -> [(Bool, Int)]
---helperShip (x', y', a, b, c, attacks) levelNumber = [ (menuShipControl (x, y, a, b, c, attacks) (convertNumberLevel(levelNumber))) | [x, y] <- attacks]
-
-
---attacks level => [3, 4, 5]
-
---levelShipHud
---menuShipControl
---shipsInLevel
-
 menuShipControl :: [[Int]] -> [[[Int]]] -> [Int]
 menuShipControl xxs yys = controlEach (nub xxs) yys
     where controlEach xxs [] = []
@@ -301,6 +287,9 @@ printUseless = putStrLn ((show 3))
 
 -- Text Hello as Pixels
 helloTextPixel = [[0, 0, 2], [0, 1, 2], [0, 2, 2], [1, 1, 2], [2, 0, 2], [2, 1, 2], [2, 2, 2], [4, 0, 1], [4, 1, 1], [4, 2, 1], [4, 3, 1], [4, 4, 1], [5, 0, 1], [5, 2, 1], [5, 4, 1], [7, 0, 3], [7, 1, 3], [7, 2, 3], [8, 2, 3], [10, 0, 3], [10, 1, 3], [10, 2, 3], [11, 2, 3], [13, 0, 4], [14, 0, 4], [15, 0, 4], [13, 2, 4], [14, 2, 4], [15, 2, 4], [13, 1, 4], [15, 1, 4]]
+
+-- End Screen
+endScreenPixel = [[0, 0, 1], [1, 1, 1], [1, 2, 1], [2, 0, 1], [4, 0, 2], [4, 1, 2], [4, 2, 2], [5, 2, 2], [5, 0, 2], [6, 0, 2], [6, 1, 2], [6, 2, 2], [8, 0, 3], [8, 1, 3], [9, 2, 3], [10, 0, 3], [10, 1, 3], [14, 0, 4], [15, 1, 4], [16, 0, 4], [17, 1, 4], [18, 0, 4], [20, 0, 5], [20, 1, 5], [20, 2, 5], [22, 0, 6], [22, 1, 6], [22, 2, 6], [22, 3, 6], [23, 1, 6], [24, 2, 6], [25, 0, 6], [25, 1, 6], [25, 2, 6], [25, 3, 6]]
 
 getKeyEventThing :: [([Char], String, Integer)] -> String
 getKeyEventThing [(action, key, duration)] = key
