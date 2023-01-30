@@ -74,7 +74,7 @@ move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, cursorMode, curre
                                                                                                      y,
                                                                                                      check (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2) (convertNumberLevel (cursorMode+1)),
                                                                                                      cursorMode,
-                                                                                                     (if ((checkIfTwoPlayerFinished (attacks, attacks2)) /= 0) then (4) else (currentLevel)),
+                                                                                                     (if ((checkIfTwoPlayerFinished (attacks, attacks2)) == 0) then (currentLevel) else (4)),
                                                                                                      (addShipAttack1 (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2)),
                                                                                                      (addShipAttack2 (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2)))
 
@@ -265,7 +265,7 @@ checkIfLevelFinished level (x, y, cursorColor, cursorMode, currentLevel, attacks
 
 checkIfTwoPlayerFinished :: ([[Int]], [[Int]]) -> Int
 checkIfTwoPlayerFinished (attacks, attacks2) | (length(convertLevelPixelLevel dim one)) == (length([ True | [xS, yS, colorS] <- (attacks), elem ([xS, yS]) (convertLevelPixelLevel dim one)])) = 1
-                                             | (length(convertLevelPixelLevel dim two)) == (length([ True | [xS, yS, colorS] <- (attacks), elem ([xS, yS]) (convertLevelPixelLevel dim two)])) = 2
+                                             | (length(convertLevelPixelLevel dim two)) == (length([ True | [xS, yS, colorS] <- (attacks2), elem ([xS, yS]) (convertLevelPixelLevel dim two)])) = 2
                                              | otherwise = 0
 
 ----------------------------------------------------------------------------------
@@ -349,4 +349,3 @@ main = do
       eventMain
       initState
   destroySDLControlWindow window
-  
