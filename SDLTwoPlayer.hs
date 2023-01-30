@@ -135,7 +135,7 @@ move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 3, currentLevel, 
                                                                                                      attacks, attacks2, playerShips1,
                                                                                                      playerShips2 ++ newShip (constShips !! cship) crotation (x, y, cursorColor, 3, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship),
                                                                                                      crotation, cship + 1)
---MOVE RETURN MODE 0
+-- MOVE RETURN MODE 0
 move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 0, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (playerShips2) == 1 then x else 17,
                                                                                                      if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (playerShips2) == 1 then y else 1,
                                                                                                      check (x, y, cursorColor, 0, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (playerShips2),
@@ -147,7 +147,7 @@ move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 0, currentLevel, 
                                                                                                      playerShips2,
                                                                                                      crotation,
                                                                                                      cship)
---MOVE RETURN MODE 1
+-- MOVE RETURN MODE 1
 move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (playerShips1) == 1 then x else 3,
                                                                                                      if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (playerShips1) == 1 then y else 1,
                                                                                                      check (x, y, cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (playerShips1),
@@ -159,6 +159,10 @@ move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 1, currentLevel, 
                                                                                                      playerShips2,
                                                                                                      crotation,
                                                                                                      cship)
+-- MOVE SPACE ROTATION 0
+move (xdim, ydim) ("Pressed", "SPACE", _) (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2, playerShips1, playerShips2, 0, cship) = (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2, playerShips1, playerShips2, 1, cship)
+-- MOVE SPACE ROTATION 1
+move (xdim, ydim) ("Pressed", "SPACE", _) (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2, playerShips1, playerShips2, 1, cship) = (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2, playerShips1, playerShips2, 0, cship)
 
 move _ _ (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
 
