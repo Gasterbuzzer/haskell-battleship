@@ -295,7 +295,7 @@ levelShipHud levelNumber attack = [ [(1 + (currentShipSize)), (1 + (shipNumber *
 
 newShip :: ShipLength -> Rotation -> MyState -> [[Int]]
 newShip 1 _ (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = [[x,y]]
-newShip n 0 (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) | (x + n - 1) < 20 = newShip (n-1) 0 (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) ++ [[x + n - 1, y]]
+newShip n 0 (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) | (x + n - 1) < 27 = newShip (n-1) 0 (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) ++ [[x + n - 1, y]]
                                                | otherwise = error "ship out of map"
 newShip n 1 (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) | (y + n - 1) < 11 = newShip (n-1) 1 (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) ++ [[x, y + n - 1]]
                                                 | otherwise = error "ship out of map"
