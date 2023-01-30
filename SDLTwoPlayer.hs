@@ -115,20 +115,20 @@ move (xdim, ydim) ("Held", "DOWN", dur) (x, y, a, 1, c, attacks, attacks2, playe
 move (xdim, ydim) ("Pressed", "RIGHT", _) (x, y, a, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (if x < 19 || x > 25 then ((x + 1) `mod` xdim) + 10 else ((x + 1) `mod` xdim) + 20, y, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
 move (xdim, ydim) ("Held", "RIGHT", dur) (x, y, a, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = if dur >= 100 then (if x < 19 || x > 25 then ((x + 1) `mod` xdim) + 10 else ((x + 1) `mod` xdim) + 20, y, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) else (x, y, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
 -- MOVE RETURN MODE 2 CSHIP 4
-move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 2, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, 1) = (17, 1, 2, 3, currentLevel, attacks, attacks2, playerShips1,
-                                                                                                     drop 1 playerShips2  ++ newShip (constShips !! 4) crotation (x, y, cursorColor, 3, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, 4),
+move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 2, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, 4) = (17, 1, 2, 3, currentLevel, attacks, attacks2, playerShips1,
+                                                                                                     drop 1 playerShips2 ++ newShip (constShips !! 4) crotation (x, y, cursorColor, 2, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, 4),
                                                                                                      crotation, 0)
 -- MOVE RETURN MODE 2 CSHIP _
 move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 2, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (3, 1, 2, 2, currentLevel, attacks, attacks2, playerShips1,
-                                                                                                     playerShips2 ++ newShip (constShips !! cship) crotation (x, y, cursorColor, 3, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship),
+                                                                                                     playerShips2 ++ newShip (constShips !! cship) crotation (x, y, cursorColor, 2, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship),
                                                                                                      crotation, cship + 1)
 -- MOVE RETURN MODE 3 CSHIP 4
-move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 3, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, 1) = (3, 1, 2, 0, currentLevel, attacks, attacks2,
-                                                                                                     drop 1 playerShips1 ++ newShip (constShips !! 4) crotation (x, y, cursorColor, 2, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, 4),
+move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 3, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, 4) = (3, 1, 2, 0, currentLevel, attacks, attacks2,
+                                                                                                     drop 1 playerShips1 ++ newShip (constShips !! 4) crotation (x, y, cursorColor, 3, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, 4),
                                                                                                      playerShips2, crotation, 0)
 -- MOVE RETURN MODE 3 CSHIP _
 move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 3, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (17, 1, 2, 3, currentLevel, attacks, attacks2,
-                                                                                                     playerShips1 ++ newShip (constShips !! cship) crotation (x, y, cursorColor, 2, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship),
+                                                                                                     playerShips1 ++ newShip (constShips !! cship) crotation (x, y, cursorColor, 3, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship),
                                                                                                      playerShips2, crotation, cship + 1)
 
 -- MOVE RETURN MODE 0
@@ -174,7 +174,6 @@ checkAttack1 :: MyState -> [[Int]] -> Int
 checkAttack1 (x', y', a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) level | length (helper (x', y', a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) level) == 1 = 1
                                                                                                       | otherwise                                                       = 4
     where helper (x', y', a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) level                                                               = [1 | xs <- (level), head xs == x' && xs !! 1 == y']
-
 
 
 addShipAttack1 :: MyState -> [[Int]]
@@ -241,7 +240,7 @@ eventMain events state = (toFrameList dim helloTextPixel state', state')
 ----------------------------------------------------------------------------------
 
 levelHudBorders :: [[Int]]
-levelHudBorders = [[2, y, 5] | y <- [0..10]] ++ [[13, y, 5] | y <- [0..10]] ++ [[x, 0, 5] | x <- [2..13]] ++ [[x, 11, 5] | x <- [2..13]]           ++ [[16, y, 5] | y <- [0..10]] ++ [[27, y, 5] | y <- [0..10]] ++ [[x, 0, 5] | x <- [16..27]] ++ [[x, 11, 5] | x <- [16..27]]
+levelHudBorders = [[2, y, 5] | y <- [0..10]] ++ [[13, y, 5] | y <- [0..10]] ++ [[x, 0, 5] | x <- [2..13]] ++ [[x, 11, 5] | x <- [2..13]] ++ [[16, y, 5] | y <- [0..10]] ++ [[27, y, 5] | y <- [0..10]] ++ [[x, 0, 5] | x <- [16..27]] ++ [[x, 11, 5] | x <- [16..27]]
 -- levelHudBorders: First part left Side, Second part Right Side, Third Part Top, Fourth Part Bottom
 
 newShip :: ShipLength -> Rotation -> MyState -> [[Int]]
@@ -268,12 +267,6 @@ convertLevelPixel dim level = [ [xS, yS, color] | ship <- level, [xS, yS, color]
 
 convertLevelPixelPlace :: (Int, Int) -> [[[Int]]] -> [[Int]]
 convertLevelPixelPlace dim level = [ [xS, yS, 2] | ship <- level, [xS, yS] <- ship]
-
-menuShipControl :: [[Int]] -> [[[Int]]] -> [Int]
-menuShipControl xxs yys = controlEach (nub xxs) yys
-    where controlEach xxs [] = []
-          controlEach xxs (y:ys) | [ys | ys <- y, [x'',y'',color] <- xxs, ys == [x'',y'']] == y = controlEach xxs ys
-                                 | otherwise = length y : controlEach xxs ys
 
 removeItem :: Int -> [Int] -> [Int]
 removeItem _ []                 = []
