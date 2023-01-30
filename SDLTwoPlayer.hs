@@ -122,11 +122,11 @@ checkAttack1 (x', y', a, b, c, attacks, attacks2) level | length (helper (x', y'
 
 addShipAttack1 :: MyState -> [[Int]]
 addShipAttack1 (x', y', a, b, 0, attacks, attacks2) = [[x', y', checkAttack1 (x', y', a, b, 0, attacks, attacks2) (convertNumberLevel 1)]] ++ attacks
-addShipAttack1 (x', y', a, b, 1, attacks, attacks2) = [[x', y', checkAttack1 (x', y', a, b, 0, attacks, attacks2) (convertNumberLevel 1)]] ++ attacks
+addShipAttack1 (x', y', a, b, 1, attacks, attacks2) = [] ++ attacks
 
 addShipAttack2 :: MyState -> [[Int]]
-addShipAttack2 (x', y', a, b, 0, attacks, attacks2) = [[x', y', checkAttack1 (x', y', a, b, 0, attacks, attacks2) (convertNumberLevel 2)]] ++ attacks2
-addShipAttack2 (x', y', a, b, 1, attacks, attacks2) = [[x', y', checkAttack1 (x', y', a, b, 0, attacks, attacks2) (convertNumberLevel 2)]] ++ attacks2
+addShipAttack2 (x', y', a, b, 0, attacks, attacks2) = [] ++ attacks2
+addShipAttack2 (x', y', a, b, 1, attacks, attacks2) = [[x', y', checkAttack1 (x', y', a, b, 1, attacks, attacks2) (convertNumberLevel 2)]] ++ attacks2
 
 addShip :: MyState -> [[Int]]
 addShip (x', y', a, b, currentLevel, attacks, attacks2) = [[x', y', check (x', y', a, b, currentLevel, attacks, attacks2) (convertNumberLevel currentLevel)]] ++ attacks
@@ -213,15 +213,15 @@ fourthp1 :: [[[Int]]]
 fourthp1 = [[[0,0]]]
 
 
-two :: [[[Int]]]
-two = [[[25,3],[25,4],[25,5],[25,6]],
+onep2 :: [[[Int]]]
+onep2 = [[[25,3],[25,4],[25,5],[25,6]],
        [[18,1],[18,2],[18,3],[18,4]],
        [[20,4],[21,4],[22,4]],
        [[17,9],[18,9],[19,9]],
        [[25,10],[26,10]]]
 
-twop2 :: [[[Int]]]
-twop2 = [[[23,3],[24,3],[25,3],[26,3]],
+two :: [[[Int]]]
+two = [[[23,3],[24,3],[25,3],[26,3]],
        [[23,7],[23,8],[23,9],[23,10]],
        [[17,3],[18,3],[19,3]],
        [[18,8],[19,8],[20,8]],
