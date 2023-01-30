@@ -127,7 +127,7 @@ move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 3, currentLevel, 
 move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 3, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (17, 1, 2, 3, currentLevel, attacks, attacks2,
                                                                                                      playerShips1 ++ newShip (constShips !! cship) crotation (x, y, cursorColor, 2, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship),
                                                                                                      playerShips2, crotation, cship + 1)
-                                                                                                     
+
 -- MOVE RETURN MODE 0
 move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 0, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (playerShips2) == 1 then x else 17,
                                                                                                      if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (playerShips2) == 1 then y else 1,
@@ -200,7 +200,7 @@ toFrameList (xdim, ydim) pixels (xC, yC, cursorColor, cursorMode, level, attacks
           6 -> (Pixel 234 255 0) -- Yellow
   1 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks2])++(convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(convertLevelPixel (xdim, ydim) [attacks2])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
   2 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks2])++(convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(convertLevelPixel (xdim, ydim) [attacks2])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
-  3 -> toFrameList (xdim, ydim) ((if cursorMode == 3 then (convertLevelPixel (xdim, ydim) [playerShips2]) else [])++(if cursorMode == 2 then (convertLevelPixel (xdim, ydim) [playerShips1]) else [])++levelHudBorders) (xC, yC, cursorColor, cursorMode, (if (cursorMode == 0 || cursorMode == 1) then 1 else 0), attacks, attacks2, playerShips1, playerShips2, crotation, cship)
+  3 -> toFrameList (xdim, ydim) ((if cursorMode == 3 then (convertLevelPixelPlace (xdim, ydim) [playerShips2]) else [])++(if cursorMode == 2 then (convertLevelPixelPlace (xdim, ydim) [playerShips1]) else [])++levelHudBorders) (xC, yC, cursorColor, cursorMode, (if (cursorMode == 0 || cursorMode == 1) then 1 else 0), attacks, attacks2, playerShips1, playerShips2, crotation, cship)
   4 -> toFrameList (xdim, ydim) (endScreenPixel) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
   9 -> toFrameList (xdim, ydim) ((levelShipHud 1 [[2,3],[18,3],[18,4],[18,5],[18,6],[18,2], [18,2]])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
   _ -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks2])++(convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(convertLevelPixel (xdim, ydim) [attacks2])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
@@ -321,6 +321,9 @@ checkIfTwoPlayerFinished (attacks, attacks2, playerShips1, playerShips2) | (leng
 
 convertLevelPixel :: (Int, Int) -> [[[Int]]] -> [[Int]]
 convertLevelPixel dim level = [ [xS, yS, color] | ship <- level, [xS, yS, color] <- ship]
+
+convertLevelPixelPlace :: (Int, Int) -> [[[Int]]] -> [[Int]]
+convertLevelPixelPlace dim level = [ [xS, yS, 2] | ship <- level, [xS, yS] <- ship]
 
 convertLevelPixelLevel :: (Int, Int) -> [[[Int]]] -> [[Int]]
 convertLevelPixelLevel dim level = [ [xS, yS] | ship <- level, [xS, yS] <- ship]
