@@ -213,7 +213,7 @@ getInfoPixel pixels [x, y] = [infoPixel | [x', y', infoPixel] <- pixels, x' == x
 
 --           input events      state      frame       new state
 eventMain :: [Event String] -> MyState -> (ListFrame, MyState)
-eventMain events state = (toFrameList dim helloTextPixel state', state')
+eventMain events state = trace (show state) (toFrameList dim helloTextPixel state', state')
   where
     state' =
       foldl
