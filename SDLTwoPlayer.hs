@@ -136,7 +136,7 @@ move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 0, currentLevel, 
                                                                                                      if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (playerShips2) == 1 then y else 1,
                                                                                                      check (x, y, cursorColor, 0, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (playerShips2),
                                                                                                      if check (x, y,cursorColor, 0, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (playerShips2) == 1 then 0 else 1,
-                                                                                                     (if ((checkIfTwoPlayerFinished ((addShipAttack1 (x, y, cursorColor, 0, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship)), (addShipAttack2 (x, y, cursorColor, 0, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship)), playerShips1, playerShips2)) /= 0) then (4) else (1)),
+                                                                                                     (if ((checkIfTwoPlayerFinished ((addShipAttack1 (x, y, cursorColor, 0, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship)), (addShipAttack2 (x, y, cursorColor, 0, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship)), playerShips1, playerShips2)) /= 0) then (3+(checkIfTwoPlayerFinished ((addShipAttack1 (x, y, cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship)), (addShipAttack2 (x, y, cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship)), playerShips1, playerShips2))) else (1)),
                                                                                                      (addShipAttack1 (x, y, cursorColor, 0, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship)),
                                                                                                      (addShipAttack2 (x, y, cursorColor, 0, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship)),
                                                                                                      playerShips1,
@@ -148,7 +148,7 @@ move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 1, currentLevel, 
                                                                                                      if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (playerShips1) == 1 then y else 1,
                                                                                                      check (x, y, cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (playerShips1),
                                                                                                      if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (playerShips1) == 1 then 1 else 0,
-                                                                                                     (if ((checkIfTwoPlayerFinished ((addShipAttack1 (x, y, cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship)), (addShipAttack2 (x, y, cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship)), playerShips1, playerShips2)) /= 0) then (4) else (1)),
+                                                                                                     (if ((checkIfTwoPlayerFinished ((addShipAttack1 (x, y, cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship)), (addShipAttack2 (x, y, cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship)), playerShips1, playerShips2)) /= 0) then (3+(checkIfTwoPlayerFinished ((addShipAttack1 (x, y, cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship)), (addShipAttack2 (x, y, cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship)), playerShips1, playerShips2))) else (1)),
                                                                                                      (addShipAttack1 (x, y, cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship)),
                                                                                                      (addShipAttack2 (x, y, cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship)),
                                                                                                      playerShips1,
@@ -203,7 +203,8 @@ toFrameList (xdim, ydim) pixels (xC, yC, cursorColor, cursorMode, level, attacks
   1 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks2])++(convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(convertLevelPixel (xdim, ydim) [attacks2])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
   2 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks2])++(convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(convertLevelPixel (xdim, ydim) [attacks2])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
   3 -> toFrameList (xdim, ydim) ((if cursorMode == 2 then (convertLevelPixelPlace (xdim, ydim) [playerShips2]) else [])++(if cursorMode == 3 then (convertLevelPixelPlace (xdim, ydim) [playerShips1]) else [])++levelHudBorders) (xC, yC, cursorColor, cursorMode, (if (cursorMode == 0 || cursorMode == 1) then 1 else 0), attacks, attacks2, playerShips1, playerShips2, crotation, cship)
-  4 -> toFrameList (xdim, ydim) (endScreenPixel) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
+  4 -> toFrameList (xdim, ydim) (endScreenPixel++one) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
+  5 -> toFrameList (xdim, ydim) (endScreenPixel++two) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
   _ -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks2])++(convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(convertLevelPixel (xdim, ydim) [attacks2])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
 
 getInfoPixel :: [[Int]] -> [Int] -> Int
@@ -294,7 +295,10 @@ delay = 33000
 helloTextPixel = [[0, 0, 2], [0, 1, 2], [0, 2, 2], [1, 1, 2], [2, 0, 2], [2, 1, 2], [2, 2, 2], [4, 0, 1], [4, 1, 1], [4, 2, 1], [4, 3, 1], [4, 4, 1], [5, 0, 1], [5, 2, 1], [5, 4, 1], [7, 0, 3], [7, 1, 3], [7, 2, 3], [8, 2, 3], [10, 0, 3], [10, 1, 3], [10, 2, 3], [11, 2, 3], [13, 0, 4], [14, 0, 4], [15, 0, 4], [13, 2, 4], [14, 2, 4], [15, 2, 4], [13, 1, 4], [15, 1, 4]]
 
 -- End Screen
-endScreenPixel = [[0, 0, 1], [1, 1, 1], [1, 2, 1], [2, 0, 1], [4, 0, 2], [4, 1, 2], [4, 2, 2], [5, 2, 2], [5, 0, 2], [6, 0, 2], [6, 1, 2], [6, 2, 2], [8, 0, 3], [8, 1, 3], [9, 2, 3], [10, 0, 3], [10, 1, 3], [14, 0, 4], [15, 1, 4], [16, 0, 4], [17, 1, 4], [18, 0, 4], [20, 0, 5], [20, 1, 5], [20, 2, 5], [22, 0, 6], [22, 1, 6], [22, 2, 6], [22, 3, 6], [23, 1, 6], [24, 2, 6], [25, 0, 6], [25, 1, 6], [25, 2, 6], [25, 3, 6]]
+endScreenPixel = [[2, 1, 1], [3, 2, 1], [3, 3, 1], [4, 1, 1], [6, 1, 2], [6, 2, 2], [6, 3, 2], [7, 3, 2], [7, 1, 2], [8, 1, 2], [8, 2, 2], [8, 3, 2], [10, 1, 3], [10, 2, 3], [11, 3, 3], [12, 1, 3], [12, 2, 3], [16, 1, 4], [17, 2, 4], [18, 1, 4], [19, 2, 4], [20, 1, 4], [22, 1, 5], [22, 2, 5], [22, 3, 5], [24, 1, 6], [24, 2, 6], [24, 3, 6], [24, 4, 6], [25, 2, 6], [26, 3, 6], [27, 1, 6], [27, 2, 6], [27, 3, 6], [27, 4, 6]]
+
+one = [[13, 8, 1], [14, 7, 1], [15, 6, 1], [15, 7, 1], [15, 8, 1], [15, 9, 1], [15, 10, 1]]
+two = [[13, 6, 1], [13, 8 , 1], [13, 9, 1], [13 , 10, 1], [14, 6, 1], [14, 8, 1], [14, 10, 1], [15, 6, 1], [15, 7, 1], [15, 8, 1], [15, 10 ,1]]
 
 ----------------------------------------------------------------------------------
 -- Main
@@ -309,4 +313,4 @@ main = do
       eventMain
       initState
   destroySDLControlWindow window
-  
+
