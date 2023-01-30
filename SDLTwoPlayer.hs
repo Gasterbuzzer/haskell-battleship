@@ -72,7 +72,7 @@ move (xdim, ydim) ("Held", "RIGHT", dur) (x, y, a, 0, c, attacks, attacks2) = if
 
 move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2) = (x,
                                                                                                      y,
-                                                                                                     check (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2) (convertNumberLevel currentLevel),
+                                                                                                     check (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2) (convertNumberLevel (cursorMode+1)),
                                                                                                      cursorMode,
                                                                                                      (if ((checkIfTwoPlayerFinished (attacks, attacks2)) /= 0) then (4) else (currentLevel)),
                                                                                                      (addShipAttack1 (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2)),
@@ -121,12 +121,12 @@ checkAttack1 (x', y', a, b, c, attacks, attacks2) level | length (helper (x', y'
     where helper (x', y', a, b, c, attacks, attacks2) level                                                               = [1 | xs <- (concat level), head xs == x' && xs !! 1 == y']
 
 addShipAttack1 :: MyState -> [[Int]]
-addShipAttack1 (x', y', a, b, 0, attacks, attacks2) = [[x', y', checkAttack1 (x', y', a, b, 0, attacks, attacks2) (convertNumberLevel 1)]] ++ attacks
-addShipAttack1 (x', y', a, b, 1, attacks, attacks2) = [] ++ attacks
+addShipAttack1 (x', y', a, 0, level, attacks, attacks2) = [[x', y', checkAttack1 (x', y', a, 0, level, attacks, attacks2) (convertNumberLevel 1)]] ++ attacks
+addShipAttack1 (x', y', a, 1, level, attacks, attacks2) = [] ++ attacks
 
 addShipAttack2 :: MyState -> [[Int]]
-addShipAttack2 (x', y', a, b, 0, attacks, attacks2) = [] ++ attacks2
-addShipAttack2 (x', y', a, b, 1, attacks, attacks2) = [[x', y', checkAttack1 (x', y', a, b, 1, attacks, attacks2) (convertNumberLevel 2)]] ++ attacks2
+addShipAttack2 (x', y', a, 0, level, attacks, attacks2) = [] ++ attacks2
+addShipAttack2 (x', y', a, 1, level, attacks, attacks2) = [[x', y', checkAttack1 (x', y', a, 1, level, attacks, attacks2) (convertNumberLevel 2)]] ++ attacks2
 
 addShip :: MyState -> [[Int]]
 addShip (x', y', a, b, currentLevel, attacks, attacks2) = [[x', y', check (x', y', a, b, currentLevel, attacks, attacks2) (convertNumberLevel currentLevel)]] ++ attacks
