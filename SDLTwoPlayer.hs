@@ -125,8 +125,8 @@ addShipAttack1 (x', y', a, b, 0, attacks, attacks2) = [[x', y', checkAttack1 (x'
 addShipAttack1 (x', y', a, b, 1, attacks, attacks2) = [] ++ attacks
 
 addShipAttack2 :: MyState -> [[Int]]
-addShipAttack2 (x', y', a, b, 0, attacks, attacks2) = [[x', y', checkAttack1 (x', y', a, b, 0, attacks, attacks2) (convertNumberLevel 0)]] ++ attacks2
-addShipAttack2 (x', y', a, b, 1, attacks, attacks2) = [[x', y', checkAttack1 (x', y', a, b, 0, attacks, attacks2) (convertNumberLevel 0)]] ++ attacks2
+addShipAttack2 (x', y', a, b, 0, attacks, attacks2) = [] ++ attacks2
+addShipAttack2 (x', y', a, b, 1, attacks, attacks2) = [[x', y', checkAttack1 (x', y', a, b, 0, attacks, attacks2) (convertNumberLevel 1)]] ++ attacks2
 
 addShip :: MyState -> [[Int]]
 addShip (x', y', a, b, currentLevel, attacks, attacks2) = [[x', y', check (x', y', a, b, currentLevel, attacks, attacks2) (convertNumberLevel currentLevel)]] ++ attacks
