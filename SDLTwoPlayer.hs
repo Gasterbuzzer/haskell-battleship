@@ -74,7 +74,7 @@ move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, cursorMode, curre
                                                                                                      y,
                                                                                                      check (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2) (convertNumberLevel currentLevel),
                                                                                                      cursorMode,
-                                                                                                     (increaseCurrentLevel currentLevel (checkIfLevelFinished (convertNumberLevel currentLevel) (0, 0, 0, 0, currentLevel, (addShip (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2)), attacks2))),
+                                                                                                     (if (checkIfLevelFinished (convertNumberLevel currentLevel) (0, 0, 0, 0, currentLevel, (addShip (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2)), attacks2)) then 4 else currentLevel),
                                                                                                      (shouldIEmpty (addShip (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2)) (checkIfLevelFinished (convertNumberLevel currentLevel) (0, 0, 0, 0, currentLevel, (addShip (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2)), attacks2))),
                                                                                                      attacks2)
 
@@ -115,6 +115,15 @@ check (x', y', a, b, c, attacks, attacks2) xxs | length (helper (x', y', a, b, c
                                                | otherwise                                                          = 4
     where helper (x', y', a, b, c, attacks, attacks2) xxs = [1 | xs <- concat xxs, head xs == x' && xs !! 1 == y']
 
+checkAttack1 :: MyState -> [[[Int]]] -> Int
+checkAttack1 (x', y', a, b, c, attacks, attacks2) level | length (helper (x', y', a, b, c, attacks, attacks2) level) == 1 = 1
+                                                        | otherwise                                                       = 4
+    where helper (x', y', a, b, c, attacks, attacks2) level                                                               = [1 | xs <- (concat level), head xs == x' && xs !! 1 == y']
+
+addShipAttack1 :: MyState -> [[Int]]
+addShipAttack1 (x', y', a, b, 0, attacks, attacks2) = [[x', y', check (x', y', a, b, 0, attacks, attacks2) (convertNumberLevel 0)]] ++ attacks
+addShipAttack1 (x', y', a, b, 1, attacks, attacks2) = [] ++ attacks
+
 addShip :: MyState -> [[Int]]
 addShip (x', y', a, b, currentLevel, attacks, attacks2) = [[x', y', check (x', y', a, b, currentLevel, attacks, attacks2) (convertNumberLevel currentLevel)]] ++ attacks
 
@@ -122,31 +131,6 @@ addShip (x', y', a, b, currentLevel, attacks, attacks2) = [[x', y', check (x', y
 -- Frame Functions
 ----------------------------------------------------------------------------------
 
---         wall dimens   state      generated frame
-toFrame :: (Int, Int) -> MyState -> ListFrame
-toFrame (xdim, ydim) (x', y',a',b',_, attacks, attacks2) =
-  ListFrame $
-    map
-      ( \y ->
-          map
-            (\x ->
-              if x == x' && y == y' && a' == 1 && b' == 1 then Pixel 0xff 0xff 0xff
-              else if x == (x' + 1) && y == y' && a' == 1 && b' == 1 then Pixel 0xff 0xff 0xff
-              else if x == (x' + 2) && y == y' && a' == 1 && b' == 1 then Pixel 0xff 0xff 0xff
-              else if x == x' && y == y' && a' == 1 && b' == 0 then Pixel 0xff 0xff 0xff
-              else if x == x' && y == (y' + 1) && a' == 1 && b' == 0 then Pixel 0xff 0xff 0xff
-              else if x == x' && y == (y' + 2) && a' == 1 && b' == 0 then Pixel 0xff 0xff 0xff
-              else if x == x' && y == y' && a' == 0 && b' == 1 then Pixel 0xff 0x00 0x00
-              else if x == (x' + 1) && y == y' && a' == 0 && b' == 1 then Pixel 0xff 0x00 0x00
-              else if x == (x' + 2) && y == y' && a' == 0 && b' == 1 then Pixel 0xff 0x00 0x00
-              else if x == x' && y == y' && a' == 0 && b' == 0 then Pixel 0xff 0x00 0x00
-              else if x == x' && y == (y' + 1) && a' == 0 && b' == 0 then Pixel 0xff 0x00 0x00
-              else if x == x' && y == (y' + 2) && a' == 0 && b' == 0 then Pixel 0xff 0x00 0x00 else Pixel 0 0 0)
-            [0 .. xdim - 1]
-      )
-      [0 .. ydim - 1]
-
--- 0xFF 0x69 0xB4
 toFrameList :: (Int, Int) -> [[Int]] -> MyState -> ListFrame
 toFrameList (xdim, ydim) pixels (xC, yC, cursorColor, cursorMode, level, attacks, attacks2) = case level of
   0 -> ListFrame $ [ ([ if (any (==True) [True | [x',y', infoPixel] <- ([[xC, yC, cursorColor]]++pixels), x' == x, y' == y]) then (pixelType (getInfoPixel ([[xC, yC, cursorColor]]++pixels) [x, y])) else (pixelType 0)  | x <- [0 .. xdim - 1]]) | y <- [0 .. ydim - 1]]
@@ -159,12 +143,12 @@ toFrameList (xdim, ydim) pixels (xC, yC, cursorColor, cursorMode, level, attacks
           4 -> (Pixel 21 0 255) -- Dark Blue
           5 -> (Pixel 145 71 54) -- Brown
           6 -> (Pixel 234 255 0) -- Yellow
-  1 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(convertLevelPixel (xdim, ydim) [attacks2])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2)
-  2 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(convertLevelPixel (xdim, ydim) [attacks2])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2)
-  3 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(convertLevelPixel (xdim, ydim) [attacks2])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2)
+  1 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks2])++(convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(convertLevelPixel (xdim, ydim) [attacks2])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2)
+  2 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks2])++(convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(convertLevelPixel (xdim, ydim) [attacks2])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2)
+  3 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks2])++(convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(convertLevelPixel (xdim, ydim) [attacks2])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2)
   4 -> toFrameList (xdim, ydim) (endScreenPixel) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2)
   9 -> toFrameList (xdim, ydim) ((levelShipHud 1 [[2,3],[18,3],[18,4],[18,5],[18,6],[18,2], [18,2]])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2)
-  _ -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(convertLevelPixel (xdim, ydim) [attacks2])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2)
+  _ -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks2])++(convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(convertLevelPixel (xdim, ydim) [attacks2])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2)
 
 getInfoPixel :: [[Int]] -> [Int] -> Int
 getInfoPixel pixels [x, y] = [infoPixel | [x', y', infoPixel] <- pixels, x' == x, y' == y] !! 0
@@ -305,20 +289,11 @@ delay = 33000
 -- Testing Functions/Variables
 ----------------------------------------------------------------------------------
 
-printUseless = putStrLn ((show 3))
-
 -- Text Hello as Pixels
 helloTextPixel = [[0, 0, 2], [0, 1, 2], [0, 2, 2], [1, 1, 2], [2, 0, 2], [2, 1, 2], [2, 2, 2], [4, 0, 1], [4, 1, 1], [4, 2, 1], [4, 3, 1], [4, 4, 1], [5, 0, 1], [5, 2, 1], [5, 4, 1], [7, 0, 3], [7, 1, 3], [7, 2, 3], [8, 2, 3], [10, 0, 3], [10, 1, 3], [10, 2, 3], [11, 2, 3], [13, 0, 4], [14, 0, 4], [15, 0, 4], [13, 2, 4], [14, 2, 4], [15, 2, 4], [13, 1, 4], [15, 1, 4]]
 
 -- End Screen
 endScreenPixel = [[0, 0, 1], [1, 1, 1], [1, 2, 1], [2, 0, 1], [4, 0, 2], [4, 1, 2], [4, 2, 2], [5, 2, 2], [5, 0, 2], [6, 0, 2], [6, 1, 2], [6, 2, 2], [8, 0, 3], [8, 1, 3], [9, 2, 3], [10, 0, 3], [10, 1, 3], [14, 0, 4], [15, 1, 4], [16, 0, 4], [17, 1, 4], [18, 0, 4], [20, 0, 5], [20, 1, 5], [20, 2, 5], [22, 0, 6], [22, 1, 6], [22, 2, 6], [22, 3, 6], [23, 1, 6], [24, 2, 6], [25, 0, 6], [25, 1, 6], [25, 2, 6], [25, 3, 6]]
-
-getKeyEventThing :: [([Char], String, Integer)] -> String
-getKeyEventThing [(action, key, duration)] = key
-getKeyEventThing _ = "Nothing"
-
-testKey = [("Held","L-SHIFT",339)]
-testKeyComplicated = [("Released","L-CTRL",16944),("Released","C",16944)]
 
 ----------------------------------------------------------------------------------
 -- Main
