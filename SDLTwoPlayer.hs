@@ -188,7 +188,7 @@ addShip (x', y', a, b, currentLevel, attacks, attacks2, playerShips1, playerShip
 
 toFrameList :: (Int, Int) -> [[Int]] -> MyState -> ListFrame
 toFrameList (xdim, ydim) pixels (xC, yC, cursorColor, cursorMode, level, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = case level of
-  0 -> ListFrame $ [ ([ if (any (==True) [True | [x',y', infoPixel] <- ([[xC, yC, cursorColor]]++pixels), x' == x, y' == y]) then (pixelType (getInfoPixel ([[xC, yC, cursorColor]]++pixels) [x, y])) else (pixelType 0)  | x <- [0 .. xdim - 1]]) | y <- [0 .. ydim - 1]]
+  0 -> ListFrame $ [ ([ if (any (==True) [True | [x',y', infoPixel] <- ((cursorCalculate xC yC crotation cship cursorMode cursorColor)++pixels), x' == x, y' == y]) then (pixelType (getInfoPixel ((cursorCalculate xC yC crotation cship cursorMode cursorColor)++pixels) [x, y])) else (pixelType 0)  | x <- [0 .. xdim - 1]]) | y <- [0 .. ydim - 1]]
       where
         pixelType info = case info of
           0 -> (Pixel 115 241 255) -- Blue Sea
@@ -196,7 +196,7 @@ toFrameList (xdim, ydim) pixels (xC, yC, cursorColor, cursorMode, level, attacks
           2 -> (Pixel 120 120 120) -- Grey
           3 -> (Pixel 255 132 0) -- Orange
           4 -> (Pixel 21 0 255) -- Dark Blue
-          5 -> (Pixel 145 71 54) -- Brown
+          5 -> (Pixel 145 71 54) -- Browns
           6 -> (Pixel 234 255 0) -- Yellow
   1 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks2])++(convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(convertLevelPixel (xdim, ydim) [attacks2])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
   2 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks2])++(convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(convertLevelPixel (xdim, ydim) [attacks2])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
@@ -208,13 +208,17 @@ toFrameList (xdim, ydim) pixels (xC, yC, cursorColor, cursorMode, level, attacks
 getInfoPixel :: [[Int]] -> [Int] -> Int
 getInfoPixel pixels [x, y] = [infoPixel | [x', y', infoPixel] <- pixels, x' == x, y' == y] !! 0
 
+cursorCalculate :: Int -> Int -> Int -> Int -> Int -> Int -> [[Int]]
+cursorCalculate x y cRotation cShip cursorMode cursorColor | (cursorMode == 2) || (cursorMode == 3) = [ if (cRotation == 0) then [x+shipPos, y, cursorColor] else [x, y+shipPos, cursorColor] | shipPos <- [0,1..4]]
+                                                           | otherwise = [[x, y, cursorColor]]
+
 ----------------------------------------------------------------------------------
 -- Event Functions
 ----------------------------------------------------------------------------------
 
 --           input events      state      frame       new state
 eventMain :: [Event String] -> MyState -> (ListFrame, MyState)
-eventMain events state = trace (show state) (toFrameList dim helloTextPixel state', state')
+eventMain events state = (toFrameList dim helloTextPixel state', state')
   where
     state' =
       foldl
@@ -296,10 +300,12 @@ levelShipHud levelNumber attack = [ [(1 + (currentShipSize)), (1 + (shipNumber *
 
 newShip :: ShipLength -> Rotation -> MyState -> [[Int]]
 newShip 1 _ (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = [[x,y]]
-newShip n 0 (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) | (x + n - 1) < 27 = newShip (n-1) 0 (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) ++ [[x + n - 1, y]]
-                                               | otherwise = error "ship out of map"
+newShip n 0 (x, y, a, 2, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) | (x + n - 1) < 13 = newShip (n-1) 0 (x, y, a, 2, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) ++ [[x + n - 1, y]]
+                                                                                             | otherwise = error "ship out of map"
+newShip n 0 (x, y, a, 3, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) | (x + n - 1) < 27 = newShip (n-1) 0 (x, y, a, 3, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) ++ [[x + n - 1, y]]
+                                                                                             | otherwise = error "ship out of map"
 newShip n 1 (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) | (y + n - 1) < 11 = newShip (n-1) 1 (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) ++ [[x, y + n - 1]]
-                                                | otherwise = error "ship out of map"
+                                                                                             | otherwise = error "ship out of map"
 newShip _ _ _ = error "mhh something went wrong"
 
 rotation :: Rotation -> Rotation
