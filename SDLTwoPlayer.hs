@@ -75,8 +75,8 @@ move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, cursorMode, curre
                                                                                                      check (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2) (convertNumberLevel currentLevel),
                                                                                                      cursorMode,
                                                                                                      (if (checkIfLevelFinished (convertNumberLevel currentLevel) (0, 0, 0, 0, currentLevel, (addShip (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2)), attacks2)) then 4 else currentLevel),
-                                                                                                     (shouldIEmpty (addShip (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2)) (checkIfLevelFinished (convertNumberLevel currentLevel) (0, 0, 0, 0, currentLevel, (addShip (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2)), attacks2))),
-                                                                                                     attacks2)
+                                                                                                     (addShipAttack1 (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2)),
+                                                                                                     (addShipAttack2 (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2)))
 
 move (xdim, ydim) ("Pressed", "P0_Axis_1_D0", _) (x, y, a, 1, c, attacks, attacks2) = (x, ((y - 2) `mod` ydim) + 1, 2, 1, c, attacks, attacks2)
 move (xdim, ydim) ("Held", "P0_Axis_1_D0", dur) (x, y, a, 1, c, attacks, attacks2) = if dur >= 100 then (x, ((y - 2) `mod` ydim) + 1, 2, 1, c, attacks, attacks2) else (x, y, 2, 1, c, attacks, attacks2)
@@ -121,8 +121,12 @@ checkAttack1 (x', y', a, b, c, attacks, attacks2) level | length (helper (x', y'
     where helper (x', y', a, b, c, attacks, attacks2) level                                                               = [1 | xs <- (concat level), head xs == x' && xs !! 1 == y']
 
 addShipAttack1 :: MyState -> [[Int]]
-addShipAttack1 (x', y', a, b, 0, attacks, attacks2) = [[x', y', check (x', y', a, b, 0, attacks, attacks2) (convertNumberLevel 0)]] ++ attacks
+addShipAttack1 (x', y', a, b, 0, attacks, attacks2) = [[x', y', checkAttack1 (x', y', a, b, 0, attacks, attacks2) (convertNumberLevel 0)]] ++ attacks
 addShipAttack1 (x', y', a, b, 1, attacks, attacks2) = [] ++ attacks
+
+addShipAttack2 :: MyState -> [[Int]]
+addShipAttack2 (x', y', a, b, 0, attacks, attacks2) = [[x', y', checkAttack1 (x', y', a, b, 0, attacks, attacks2) (convertNumberLevel 0)]] ++ attacks2
+addShipAttack2 (x', y', a, b, 1, attacks, attacks2) = [[x', y', checkAttack1 (x', y', a, b, 0, attacks, attacks2) (convertNumberLevel 0)]] ++ attacks2
 
 addShip :: MyState -> [[Int]]
 addShip (x', y', a, b, currentLevel, attacks, attacks2) = [[x', y', check (x', y', a, b, currentLevel, attacks, attacks2) (convertNumberLevel currentLevel)]] ++ attacks
