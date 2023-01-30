@@ -81,14 +81,23 @@ move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 0, currentLevel, 
                                                                                                      if check (x, y,cursorColor, 0, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (convertNumberLevel (1)) == 1 then 0 else 1,
                                                                                                      (if ((checkIfTwoPlayerFinished (attacks, attacks2)) /= 0) then (4) else (currentLevel)),
                                                                                                      (addShipAttack1 (x, y, cursorColor, 0, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship)),
-                                                                                                     (addShipAttack2 (x, y, cursorColor, 0, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship)))
+                                                                                                     (addShipAttack2 (x, y, cursorColor, 0, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship)),
+                                                                                                     playerShips1,
+                                                                                                     playerShips2,
+                                                                                                     crotation,
+                                                                                                     cship)
+
 move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (convertNumberLevel (2)) == 1 then x else 3,
                                                                                                      if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (convertNumberLevel (2)) == 1 then y else 1,
                                                                                                      check (x, y, cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (convertNumberLevel (2)),
                                                                                                      if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (convertNumberLevel (2)) == 1 then 1 else 0,
                                                                                                      (if ((checkIfTwoPlayerFinished (attacks, attacks2)) /= 0) then (4) else (currentLevel)),
                                                                                                      (addShipAttack1 (x, y, cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship)),
-                                                                                                     (addShipAttack2 (x, y, cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship)))
+                                                                                                     (addShipAttack2 (x, y, cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship)),
+                                                                                                     playerShips1,
+                                                                                                     playerShips2,
+                                                                                                     crotation,
+                                                                                                     cship)
 
 move _ _ (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
 
