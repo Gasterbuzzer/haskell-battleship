@@ -269,14 +269,6 @@ convertLevelPixel dim level = [ [xS, yS, color] | ship <- level, [xS, yS, color]
 convertLevelPixelPlace :: (Int, Int) -> [[[Int]]] -> [[Int]]
 convertLevelPixelPlace dim level = [ [xS, yS, 2] | ship <- level, [xS, yS] <- ship]
 
-removeItem :: Int -> [Int] -> [Int]
-removeItem _ []                 = []
-removeItem x (y:ys) | x == y    = ys
-                    | otherwise = y : removeItem x ys
-
-removeItemList :: [Int] -> [Int] -> Int -> [Int]
-removeItemList elements listRemove elementAmount | elementAmount <= 0 = listRemove
-                                                 | otherwise          = removeItemList (tail elements) (removeItem (head elements) listRemove) (elementAmount-1)
 ----------------------------------------------------------------------------------
 -- Configuration
 ----------------------------------------------------------------------------------
