@@ -36,10 +36,9 @@ Similarly to the local installation, just might need to change the given IP Addr
 ### Gameplay instructions
 
 #### Playing the game/How is the user supposed to interact?
-After starting the game the player can move over the field to place their ships, by using the arrow keys &#8592; &#8593; &#8594; &#8595, and change the rotation of the ships by pressing "Space". The selection can be confirmed by hitting `Enter`. After both players has hidden their ships they start to attack the enemys field. If they hit a ship they can attack again otherwise its the other players turn. If one player has hitten all of his enemys ships, he wins the game.
+After starting the game the player can move over the field to place their ships, by using the arrow keys &#8592; &#8593; &#8594; &#8595;, and change the rotation of the ships by pressing "Space". The selection can be confirmed by hitting `Enter`. After both players has hidden their ships they start to attack the enemies field. If they hit a ship they can attack again otherwise its the other players turn. If one player has hitten all of his enemies ships, he wins the game.
 If no ships have been hit, the colour will change to <span style="color:darkblue">Dark Blue</span>.\
 If a ship has been hit, the colour of the field will change to <span style="color:red">Red</span>.\
-Once a ship has been sunk, all its fields will turn <span style="color:red">Red</span> in the HUD.
-After one player has won the game will automatically switch to the winning screen.
+After one player has won, the game will automatically switch to the winning screen.
 ## Contribution
 This projected is being managed and written by Henrik Bormann, Julian Koberg and Luis Platzer.
