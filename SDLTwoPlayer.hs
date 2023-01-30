@@ -70,13 +70,13 @@ move (xdim, ydim) ("Held", "DOWN", dur) (x, y, a, 0, c, attacks, attacks2) = if 
 move (xdim, ydim) ("Pressed", "RIGHT", _) (x, y, a, 0, c, attacks, attacks2) = (if x == 10 || x == 11 then (x `mod` xdim) + 11 else (x `mod` xdim) + 1, y, 2, 0, c, attacks, attacks2)
 move (xdim, ydim) ("Held", "RIGHT", dur) (x, y, a, 0, c, attacks, attacks2) = if dur >= 100 then (if x == 10 || x == 11 then (x `mod` xdim) + 11 else (x `mod` xdim) + 1, y, 2, 0, c, attacks, attacks2) else (x, y, 2, 0, c, attacks, attacks2)
 
-move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2) = (x,
+{--move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2) = (x,
                                                                                                      y,
                                                                                                      check (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2) (convertNumberLevel (cursorMode+1)),
                                                                                                      cursorMode,
                                                                                                      (if ((checkIfTwoPlayerFinished (attacks, attacks2)) == 0) then (currentLevel) else (4)),
                                                                                                      (addShipAttack1 (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2)),
-                                                                                                     (addShipAttack2 (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2)))
+                                                                                                     (addShipAttack2 (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2)))-}
 
 move (xdim, ydim) ("Pressed", "P0_Axis_1_D0", _) (x, y, a, 1, c, attacks, attacks2) = (x, ((y - 2) `mod` ydim) + 1, 2, 1, c, attacks, attacks2)
 move (xdim, ydim) ("Held", "P0_Axis_1_D0", dur) (x, y, a, 1, c, attacks, attacks2) = if dur >= 100 then (x, ((y - 2) `mod` ydim) + 1, 2, 1, c, attacks, attacks2) else (x, y, 2, 1, c, attacks, attacks2)
@@ -102,6 +102,22 @@ move (xdim, ydim) ("Held", "RIGHT", dur) (x, y, a, 1, c, attacks, attacks2) = if
                                                                                                      (increaseCurrentLevel currentLevel (checkIfLevelFinished (convertNumberLevel currentLevel) (0, 0, 0, 1, currentLevel, (addShip (x, y, cursorColor, 1, currentLevel, attacks, attacks2)), attacks2))),
                                                                                                      (shouldIEmpty (addShip (x, y, cursorColor, 1, currentLevel, attacks, attacks2)) (checkIfLevelFinished (convertNumberLevel currentLevel) (0, 0, 0, 1, currentLevel, (addShip (x, y, cursorColor, 1, currentLevel, attacks, attacks2)), attacks2))),
                                                                                                      attacks2)-}
+move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 0, currentLevel, attacks, attacks2) = (if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2) (convertNumberLevel (1)) == 1 then x else 17,
+                                                                                                     if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2) (convertNumberLevel (1)) == 1 then y else 1,
+                                                                                                     check (x, y, cursorColor, 0, currentLevel, attacks, attacks2) (convertNumberLevel (1)),
+                                                                                                     if check (x, y,cursorColor, 0, currentLevel, attacks, attacks2) (convertNumberLevel (1)) == 1 then 0 else 1,
+                                                                                                     (if ((checkIfTwoPlayerFinished (attacks, attacks2)) /= 0) then (4) else (currentLevel)),
+                                                                                                     (addShipAttack1 (x, y, cursorColor, 0, currentLevel, attacks, attacks2)),
+                                                                                                     (addShipAttack2 (x, y, cursorColor, 0, currentLevel, attacks, attacks2)))
+move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 1, currentLevel, attacks, attacks2) = (if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2) (convertNumberLevel (2)) == 1 then x else 3,
+                                                                                                     if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2) (convertNumberLevel (2)) == 1 then y else 1,
+                                                                                                     check (x, y, cursorColor, 1, currentLevel, attacks, attacks2) (convertNumberLevel (2)),
+                                                                                                     if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2) (convertNumberLevel (2)) == 1 then 1 else 0,
+                                                                                                     (if ((checkIfTwoPlayerFinished (attacks, attacks2)) /= 0) then (4) else (currentLevel)),
+                                                                                                     (addShipAttack1 (x, y, cursorColor, 1, currentLevel, attacks, attacks2)),
+                                                                                                     (addShipAttack2 (x, y, cursorColor, 1, currentLevel, attacks, attacks2)))
+
+
 
 move (xdim, ydim) ("Pressed", "SPACE", _) (x, y, cursorColor, 0, currentLevel, attacks, attacks2) = (17, 1, cursorColor, 1, currentLevel, attacks, attacks2)
 move (xdim, ydim) ("Pressed", "SPACE", _) (x, y, cursorColor, 1, currentLevel, attacks, attacks2) = (3, 1, cursorColor, 0, currentLevel, attacks, attacks2)
