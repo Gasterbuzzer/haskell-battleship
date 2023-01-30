@@ -13,14 +13,18 @@ import Data.List
 --                status  key     time
 type KeyStatus = (String, String, Integer)
 
-type MyState = (Int, Int, Int, Int, Int, [[Int]], [[Int]])
+type MyState = (Int, Int, Int, Int, Int, [[Int]], [[Int]], [[Int]], [[Int]], Int, Int)
 -- (x, y,.. which represent cursors position
 -- Color Cursor
 -- Cursor Mode
 -- Gameplay Mode (0-8) (0 == Main Menu/Nothing, 1 == Player One Place Ships, 2 == Player Two Place Ships, 3-4 == Player One Attack, 5-6 == Player Two Attack, 7 == Player One Won, 8 == Player Two won)
 -- List containing all ship attack positions.
+-- List containing enemy ship attack positions
+-- List containing all placed ships for player one
+-- List containing all placed ships for player two
+
 initState :: MyState -- initial state
-initState = (3, 1, 2, 0, 1, [[]], [[]]) -- For Info see type above.
+initState = (3, 1, 2, 0, 1, [[]], [[]], [[]], [[]], 0, 2) -- For Info see type above.
 
 -- 0 for x dimension (waagerecht)
 -- 1 for y dimension (senkrecht)
@@ -53,84 +57,68 @@ getButtonDataTuples buttonState =
 
 --      wall dimens   input event  state      new state
 move :: (Int, Int) -> KeyStatus -> MyState -> MyState
-move (xdim, ydim) ("Pressed", "P0_Axis_1_D0", _) (x, y, a, 0, c, attacks, attacks2) = (x, ((y - 2) `mod` ydim) + 1, 2, 0, c, attacks, attacks2)
-move (xdim, ydim) ("Held", "P0_Axis_1_D0", dur) (x, y, a, 0, c, attacks, attacks2) = if dur >= 100 then (x, ((y - 2) `mod` ydim) + 1, 2, 0, c, attacks, attacks2) else (x, y, 2, 0, c, attacks, attacks2)
-move (xdim, ydim) ("Pressed", "P0_Axis_0_D0", _) (x, y, a, 0, c, attacks, attacks2) = (if x > 10 || x < 4 then ((x - 1) `mod` xdim) + 10 else (x - 1) `mod` xdim, y, 2, 0, c, attacks, attacks2)
-move (xdim, ydim) ("Held", "P0_Axis_0_D0", dur) (x, y, a, 0, c, attacks, attacks2) = if dur >= 100 then (if x > 10 || x < 4 then ((x - 1) `mod` xdim) + 10 else (x - 1) `mod` xdim, y, 2, 0, c, attacks, attacks2) else (x, y, 2, 0, c, attacks, attacks2)
-move (xdim, ydim) ("Pressed", "P0_Axis_1_D1", _) (x, y, a, 0, c, attacks, attacks2) = (x, (y `mod` ydim) + 1, 2, 0, c, attacks, attacks2)
-move (xdim, ydim) ("Held", "P0_Axis_1_D1", dur) (x, y, a, 0, c, attacks, attacks2) = if dur >= 100 then (x, (y `mod` ydim) + 1, 2, 0, c, attacks, attacks2) else (x, y, 2, 0, c, attacks, attacks2)
-move (xdim, ydim) ("Pressed", "P0_Axis_0_D1", _) (x, y, a, 0, c, attacks, attacks2) = (if x == 10 || x == 11 then (x `mod` xdim) + 11 else (x `mod` xdim) + 1, y, 2, 0, c, attacks, attacks2)
-move (xdim, ydim) ("Held", "P0_Axis_0_D1", dur) (x, y, a, 0, c, attacks, attacks2) = if dur >= 100 then (if x == 10 || x == 11 then (x `mod` xdim) + 11 else (x `mod` xdim) + 1, y, 2, 0, c, attacks, attacks2) else (x, y, 2, 0, c, attacks, attacks2)
-move (xdim, ydim) ("Pressed", "UP", _) (x, y, a, 0, c, attacks, attacks2) = (x, ((y - 2) `mod` ydim) + 1, 2, 0, c, attacks, attacks2)
-move (xdim, ydim) ("Held", "UP", dur) (x, y, a, 0, c, attacks, attacks2) = if dur >= 100 then (x, ((y - 2) `mod` ydim) + 1, 2, 0, c, attacks, attacks2) else (x, y, 2, 0, c, attacks, attacks2)
-move (xdim, ydim) ("Pressed", "LEFT", _) (x, y, a, 0, c, attacks, attacks2) = (if x > 10 || x < 4 then ((x - 1) `mod` xdim) + 10 else (x - 1) `mod` xdim, y, 2, 0, c, attacks, attacks2)
-move (xdim, ydim) ("Held", "LEFT", dur) (x, y, a, 0, c, attacks, attacks2) = if dur >= 100 then (if x > 10 || x < 4 then ((x - 1) `mod` xdim) + 10 else (x - 1) `mod` xdim, y, 2, 0, c, attacks, attacks2) else (x, y, 2, 0, c, attacks, attacks2)
-move (xdim, ydim) ("Pressed", "DOWN", _) (x, y, a, 0, c, attacks, attacks2) = (x, (y `mod` ydim) + 1, 2, 0, c, attacks, attacks2)
-move (xdim, ydim) ("Held", "DOWN", dur) (x, y, a, 0, c, attacks, attacks2) = if dur >= 100 then (x, (y `mod` ydim) + 1, 2, 0, c, attacks, attacks2) else (x, y, 2, 0, c, attacks, attacks2)
-move (xdim, ydim) ("Pressed", "RIGHT", _) (x, y, a, 0, c, attacks, attacks2) = (if x == 10 || x == 11 then (x `mod` xdim) + 11 else (x `mod` xdim) + 1, y, 2, 0, c, attacks, attacks2)
-move (xdim, ydim) ("Held", "RIGHT", dur) (x, y, a, 0, c, attacks, attacks2) = if dur >= 100 then (if x == 10 || x == 11 then (x `mod` xdim) + 11 else (x `mod` xdim) + 1, y, 2, 0, c, attacks, attacks2) else (x, y, 2, 0, c, attacks, attacks2)
+move (xdim, ydim) ("Pressed", "UP", _) (x, y, a, 0, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (x, ((y - 2) `mod` ydim) + 1, 2, 0, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
+move (xdim, ydim) ("Held", "UP", dur) (x, y, a, 0, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = if dur >= 100 then (x, ((y - 2) `mod` ydim) + 1, 2, 0, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) else (x, y, 2, 0, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
+move (xdim, ydim) ("Pressed", "LEFT", _) (x, y, a, 0, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (if x > 10 || x < 4 then ((x - 1) `mod` xdim) + 10 else (x - 1) `mod` xdim, y, 2, 0, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
+move (xdim, ydim) ("Held", "LEFT", dur) (x, y, a, 0, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = if dur >= 100 then (if x > 10 || x < 4 then ((x - 1) `mod` xdim) + 10 else (x - 1) `mod` xdim, y, 2, 0, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) else (x, y, 2, 0, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
+move (xdim, ydim) ("Pressed", "DOWN", _) (x, y, a, 0, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (x, (y `mod` ydim) + 1, 2, 0, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
+move (xdim, ydim) ("Held", "DOWN", dur) (x, y, a, 0, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = if dur >= 100 then (x, (y `mod` ydim) + 1, 2, 0, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) else (x, y, 2, 0, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
+move (xdim, ydim) ("Pressed", "RIGHT", _) (x, y, a, 0, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (if x == 10 || x == 11 then (x `mod` xdim) + 11 else (x `mod` xdim) + 1, y, 2, 0, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
+move (xdim, ydim) ("Held", "RIGHT", dur) (x, y, a, 0, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = if dur >= 100 then (if x == 10 || x == 11 then (x `mod` xdim) + 11 else (x `mod` xdim) + 1, y, 2, 0, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) else (x, y, 2, 0, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
 
-move (xdim, ydim) ("Pressed", "P0_Axis_1_D0", _) (x, y, a, 1, c, attacks, attacks2) = (x, ((y - 2) `mod` ydim) + 1, 2, 1, c, attacks, attacks2)
-move (xdim, ydim) ("Held", "P0_Axis_1_D0", dur) (x, y, a, 1, c, attacks, attacks2) = if dur >= 100 then (x, ((y - 2) `mod` ydim) + 1, 2, 1, c, attacks, attacks2) else (x, y, 2, 1, c, attacks, attacks2)
-move (xdim, ydim) ("Pressed", "P0_Axis_0_D0", _) (x, y, a, 1, c, attacks, attacks2) = (if x > 20 || x < 18 then ((x - 1) `mod` xdim) + 20 else ((x - 1) `mod` xdim) + 10, y, 2, 1, c, attacks, attacks2)
-move (xdim, ydim) ("Held", "P0_Axis_0_D0", dur) (x, y, a, 1, c, attacks, attacks2) = if dur >= 100 then (if x > 20 || x < 18 then ((x - 1) `mod` xdim) + 20 else ((x - 1) `mod` xdim) + 10, y, 2, 1, c, attacks, attacks2) else (x, y, 2, 1, c, attacks, attacks2)
-move (xdim, ydim) ("Pressed", "P0_Axis_1_D1", _) (x, y, a, 1, c, attacks, attacks2) = (x, (y `mod` ydim) + 1, 2, 1, c, attacks, attacks2)
-move (xdim, ydim) ("Held", "P0_Axis_1_D1", dur) (x, y, a, 1, c, attacks, attacks2) = if dur >= 100 then (x, (y `mod` ydim) + 1, 2, 1, c, attacks, attacks2) else (x, y, 2, 1, c, attacks, attacks2)
-move (xdim, ydim) ("Pressed", "P0_Axis_0_D1", _) (x, y, a, 1, c, attacks, attacks2) = (if x < 19 || x > 25 then ((x + 1) `mod` xdim) + 10 else ((x + 1) `mod` xdim) + 20, y, 2, 1, c, attacks, attacks2)
-move (xdim, ydim) ("Held", "P0_Axis_0_D1", dur) (x, y, a, 1, c, attacks, attacks2) = if dur >= 100 then (if x < 19 || x > 25 then ((x + 1) `mod` xdim) + 10 else ((x + 1) `mod` xdim) + 20, y, 2, 1, c, attacks, attacks2) else (x, y, 2, 1, c, attacks, attacks2)
-move (xdim, ydim) ("Pressed", "UP", _) (x, y, a, 1, c, attacks, attacks2) = (x, ((y - 2) `mod` ydim) + 1, 2, 1, c, attacks, attacks2)
-move (xdim, ydim) ("Held", "UP", dur) (x, y, a, 1, c, attacks, attacks2) = if dur >= 100 then (x, ((y - 2) `mod` ydim) + 1, 2, 1, c, attacks, attacks2) else (x, y, 2, 1, c, attacks, attacks2)
-move (xdim, ydim) ("Pressed", "LEFT", _) (x, y, a, 1, c, attacks, attacks2) = (if x > 20 || x < 18 then ((x - 1) `mod` xdim) + 20 else ((x - 1) `mod` xdim) + 10, y, 2, 1, c, attacks, attacks2)
-move (xdim, ydim) ("Held", "LEFT", dur) (x, y, a, 1, c, attacks, attacks2) = if dur >= 100 then (if x > 20 || x < 18 then ((x - 1) `mod` xdim) + 20 else ((x - 1) `mod` xdim) + 10, y, 2, 1, c, attacks, attacks2) else (x, y, 2, 1, c, attacks, attacks2)
-move (xdim, ydim) ("Pressed", "DOWN", _) (x, y, a, 1, c, attacks, attacks2) = (x, (y `mod` ydim) + 1, 2, 1, c, attacks, attacks2)
-move (xdim, ydim) ("Held", "DOWN", dur) (x, y, a, 1, c, attacks, attacks2) = if dur >= 100 then (x, (y `mod` ydim) + 1, 2, 1, c, attacks, attacks2) else (x, y, 2, 1, c, attacks, attacks2)
-move (xdim, ydim) ("Pressed", "RIGHT", _) (x, y, a, 1, c, attacks, attacks2) = (if x < 19 || x > 25 then ((x + 1) `mod` xdim) + 10 else ((x + 1) `mod` xdim) + 20, y, 2, 1, c, attacks, attacks2)
-move (xdim, ydim) ("Held", "RIGHT", dur) (x, y, a, 1, c, attacks, attacks2) = if dur >= 100 then (if x < 19 || x > 25 then ((x + 1) `mod` xdim) + 10 else ((x + 1) `mod` xdim) + 20, y, 2, 1, c, attacks, attacks2) else (x, y, 2, 1, c, attacks, attacks2)
+move (xdim, ydim) ("Pressed", "UP", _) (x, y, a, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (x, ((y - 2) `mod` ydim) + 1, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
+move (xdim, ydim) ("Held", "UP", dur) (x, y, a, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = if dur >= 100 then (x, ((y - 2) `mod` ydim) + 1, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) else (x, y, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
+move (xdim, ydim) ("Pressed", "LEFT", _) (x, y, a, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (if x > 20 || x < 18 then ((x - 1) `mod` xdim) + 20 else ((x - 1) `mod` xdim) + 10, y, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
+move (xdim, ydim) ("Held", "LEFT", dur) (x, y, a, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = if dur >= 100 then (if x > 20 || x < 18 then ((x - 1) `mod` xdim) + 20 else ((x - 1) `mod` xdim) + 10, y, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) else (x, y, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
+move (xdim, ydim) ("Pressed", "DOWN", _) (x, y, a, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (x, (y `mod` ydim) + 1, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
+move (xdim, ydim) ("Held", "DOWN", dur) (x, y, a, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = if dur >= 100 then (x, (y `mod` ydim) + 1, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) else (x, y, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
+move (xdim, ydim) ("Pressed", "RIGHT", _) (x, y, a, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (if x < 19 || x > 25 then ((x + 1) `mod` xdim) + 10 else ((x + 1) `mod` xdim) + 20, y, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
+move (xdim, ydim) ("Held", "RIGHT", dur) (x, y, a, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = if dur >= 100 then (if x < 19 || x > 25 then ((x + 1) `mod` xdim) + 10 else ((x + 1) `mod` xdim) + 20, y, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) else (x, y, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
 
-move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 0, currentLevel, attacks, attacks2) = (if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2) (convertNumberLevel (1)) == 1 then x else 17,
-                                                                                                     if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2) (convertNumberLevel (1)) == 1 then y else 1,
-                                                                                                     check (x, y, cursorColor, 0, currentLevel, attacks, attacks2) (convertNumberLevel (1)),
-                                                                                                     if check (x, y,cursorColor, 0, currentLevel, attacks, attacks2) (convertNumberLevel (1)) == 1 then 0 else 1,
+move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 0, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (convertNumberLevel (1)) == 1 then x else 17,
+                                                                                                     if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (convertNumberLevel (1)) == 1 then y else 1,
+                                                                                                     check (x, y, cursorColor, 0, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (convertNumberLevel (1)),
+                                                                                                     if check (x, y,cursorColor, 0, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (convertNumberLevel (1)) == 1 then 0 else 1,
                                                                                                      (if ((checkIfTwoPlayerFinished (attacks, attacks2)) /= 0) then (4) else (currentLevel)),
-                                                                                                     (addShipAttack1 (x, y, cursorColor, 0, currentLevel, attacks, attacks2)),
-                                                                                                     (addShipAttack2 (x, y, cursorColor, 0, currentLevel, attacks, attacks2)))
-move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 1, currentLevel, attacks, attacks2) = (if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2) (convertNumberLevel (2)) == 1 then x else 3,
-                                                                                                     if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2) (convertNumberLevel (2)) == 1 then y else 1,
-                                                                                                     check (x, y, cursorColor, 1, currentLevel, attacks, attacks2) (convertNumberLevel (2)),
-                                                                                                     if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2) (convertNumberLevel (2)) == 1 then 1 else 0,
+                                                                                                     (addShipAttack1 (x, y, cursorColor, 0, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship)),
+                                                                                                     (addShipAttack2 (x, y, cursorColor, 0, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship)))
+move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (convertNumberLevel (2)) == 1 then x else 3,
+                                                                                                     if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (convertNumberLevel (2)) == 1 then y else 1,
+                                                                                                     check (x, y, cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (convertNumberLevel (2)),
+                                                                                                     if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (convertNumberLevel (2)) == 1 then 1 else 0,
                                                                                                      (if ((checkIfTwoPlayerFinished (attacks, attacks2)) /= 0) then (4) else (currentLevel)),
-                                                                                                     (addShipAttack1 (x, y, cursorColor, 1, currentLevel, attacks, attacks2)),
-                                                                                                     (addShipAttack2 (x, y, cursorColor, 1, currentLevel, attacks, attacks2)))
+                                                                                                     (addShipAttack1 (x, y, cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship)),
+                                                                                                     (addShipAttack2 (x, y, cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship)))
 
-move _ _ (x, y, a, b, c, attacks, attacks2) = (x, y, a, b, c, attacks, attacks2)
+move _ _ (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
 
 check :: MyState -> [[[Int]]] -> Int
-check (x', y', a, b, c, attacks, attacks2) xxs | length (helper (x', y', a, b, c, attacks, attacks2) xxs) == 1      = 1
-                                               | otherwise                                                          = 4
-    where helper (x', y', a, b, c, attacks, attacks2) xxs = [1 | xs <- concat xxs, head xs == x' && xs !! 1 == y']
+check (x', y', a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) xxs | length (helper (x', y', a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) xxs) == 1      = 1
+                                                                                             | otherwise                                                          = 4
+    where helper (x', y', a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) xxs = [1 | xs <- concat xxs, head xs == x' && xs !! 1 == y']
 
 checkAttack1 :: MyState -> [[[Int]]] -> Int
-checkAttack1 (x', y', a, b, c, attacks, attacks2) level | length (helper (x', y', a, b, c, attacks, attacks2) level) == 1 = 1
-                                                        | otherwise                                                       = 4
-    where helper (x', y', a, b, c, attacks, attacks2) level                                                               = [1 | xs <- (concat level), head xs == x' && xs !! 1 == y']
+checkAttack1 (x', y', a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) level | length (helper (x', y', a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) level) == 1 = 1
+                                                                                                      | otherwise                                                       = 4
+    where helper (x', y', a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) level                                                               = [1 | xs <- (concat level), head xs == x' && xs !! 1 == y']
 
 addShipAttack1 :: MyState -> [[Int]]
-addShipAttack1 (x', y', a, 0, level, attacks, attacks2) = [[x', y', checkAttack1 (x', y', a, 0, level, attacks, attacks2) (convertNumberLevel 1)]] ++ attacks
-addShipAttack1 (x', y', a, 1, level, attacks, attacks2) = [] ++ attacks
+addShipAttack1 (x', y', a, 0, level, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = [[x', y', checkAttack1 (x', y', a, 0, level, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (convertNumberLevel 1)]] ++ attacks
+addShipAttack1 (x', y', a, 1, level, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = [] ++ attacks
 
 addShipAttack2 :: MyState -> [[Int]]
-addShipAttack2 (x', y', a, 0, level, attacks, attacks2) = [] ++ attacks2
-addShipAttack2 (x', y', a, 1, level, attacks, attacks2) = [[x', y', checkAttack1 (x', y', a, 1, level, attacks, attacks2) (convertNumberLevel 2)]] ++ attacks2
+addShipAttack2 (x', y', a, 0, level, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = [] ++ attacks2
+addShipAttack2 (x', y', a, 1, level, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = [[x', y', checkAttack1 (x', y', a, 1, level, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (convertNumberLevel 2)]] ++ attacks2
 
 addShip :: MyState -> [[Int]]
-addShip (x', y', a, b, currentLevel, attacks, attacks2) = [[x', y', check (x', y', a, b, currentLevel, attacks, attacks2) (convertNumberLevel currentLevel)]] ++ attacks
+addShip (x', y', a, b, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = [[x', y', check (x', y', a, b, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (convertNumberLevel currentLevel)]] ++ attacks
 
 ----------------------------------------------------------------------------------
 -- Frame Functions
 ----------------------------------------------------------------------------------
 
 toFrameList :: (Int, Int) -> [[Int]] -> MyState -> ListFrame
-toFrameList (xdim, ydim) pixels (xC, yC, cursorColor, cursorMode, level, attacks, attacks2) = case level of
+toFrameList (xdim, ydim) pixels (xC, yC, cursorColor, cursorMode, level, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = case level of
   0 -> ListFrame $ [ ([ if (any (==True) [True | [x',y', infoPixel] <- ([[xC, yC, cursorColor]]++pixels), x' == x, y' == y]) then (pixelType (getInfoPixel ([[xC, yC, cursorColor]]++pixels) [x, y])) else (pixelType 0)  | x <- [0 .. xdim - 1]]) | y <- [0 .. ydim - 1]]
       where
         pixelType info = case info of
@@ -141,12 +129,12 @@ toFrameList (xdim, ydim) pixels (xC, yC, cursorColor, cursorMode, level, attacks
           4 -> (Pixel 21 0 255) -- Dark Blue
           5 -> (Pixel 145 71 54) -- Brown
           6 -> (Pixel 234 255 0) -- Yellow
-  1 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks2])++(convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(convertLevelPixel (xdim, ydim) [attacks2])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2)
-  2 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks2])++(convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(convertLevelPixel (xdim, ydim) [attacks2])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2)
-  3 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks2])++(convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(convertLevelPixel (xdim, ydim) [attacks2])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2)
-  4 -> toFrameList (xdim, ydim) (endScreenPixel) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2)
-  9 -> toFrameList (xdim, ydim) ((levelShipHud 1 [[2,3],[18,3],[18,4],[18,5],[18,6],[18,2], [18,2]])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2)
-  _ -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks2])++(convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(convertLevelPixel (xdim, ydim) [attacks2])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2)
+  1 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks2])++(convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(convertLevelPixel (xdim, ydim) [attacks2])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
+  2 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks2])++(convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(convertLevelPixel (xdim, ydim) [attacks2])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
+  3 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks2])++(convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(convertLevelPixel (xdim, ydim) [attacks2])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
+  4 -> toFrameList (xdim, ydim) (endScreenPixel) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
+  9 -> toFrameList (xdim, ydim) ((levelShipHud 1 [[2,3],[18,3],[18,4],[18,5],[18,6],[18,2], [18,2]])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
+  _ -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks2])++(convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(convertLevelPixel (xdim, ydim) [attacks2])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
 
 getInfoPixel :: [[Int]] -> [Int] -> Int
 getInfoPixel pixels [x, y] = [infoPixel | [x', y', infoPixel] <- pixels, x' == x, y' == y] !! 0
@@ -238,10 +226,10 @@ levelShipHud :: Int -> [[Int]] -> [[Int]]
 levelShipHud levelNumber attack = [ [(1 + (currentShipSize)), (1 + (shipNumber * 2)), 2] | (shipSize, shipNumber) <- (zip (menuShipControl attack (convertNumberLevel levelNumber)) [0..]), currentShipSize <- [1..shipSize]]           ++           [ [(1 + (currentShipSize)), 1+( (length((menuShipControl attack (convertNumberLevel levelNumber)))*2) + (shipNumber * 2)), 1] | (shipSize, shipNumber) <- (zip (removeItemList (menuShipControl attack (convertNumberLevel levelNumber)) (shipsInLevel levelNumber) (length (menuShipControl attack (convertNumberLevel levelNumber)))) [0..]), currentShipSize <- [1..shipSize]]
 
 newShip :: ShipLength -> Rotation -> MyState -> [[Int]]
-newShip 1 _ (x, y, a, b, c, attacks, attacks2) = [[x,y]]
-newShip n 0 (x, y, a, b, c, attacks, attacks2) | (x + n - 1) < 20 = newShip (n-1) 0 (x, y, a, b, c, attacks, attacks2) ++ [[x + n - 1, y]]
+newShip 1 _ (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = [[x,y]]
+newShip n 0 (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) | (x + n - 1) < 20 = newShip (n-1) 0 (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) ++ [[x + n - 1, y]]
                                                | otherwise = error "ship out of map"
-newShip n 1 (x, y, a, b, c, attacks, attacks2) | (y + n - 1) < 11 = newShip (n-1) 1 (x, y, a, b, c, attacks, attacks2) ++ [[x, y + n - 1]]
+newShip n 1 (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) | (y + n - 1) < 11 = newShip (n-1) 1 (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) ++ [[x, y + n - 1]]
                                                 | otherwise = error "ship out of map"
 newShip _ _ _ = error "mhh something went wrong"
 
@@ -251,7 +239,7 @@ rotation 1 = 0
 rotation _ = error "mhh something went wrong"
 
 checkIfLevelFinished :: [[[Int]]] -> MyState -> Bool
-checkIfLevelFinished level (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2) = (length(convertLevelPixelLevel dim level)) == (length([ True | [xS, yS, colorS] <- (attacks), elem ([xS, yS]) (convertLevelPixelLevel dim level)]))
+checkIfLevelFinished level (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (length(convertLevelPixelLevel dim level)) == (length([ True | [xS, yS, colorS] <- (attacks), elem ([xS, yS]) (convertLevelPixelLevel dim level)]))
 
 checkIfTwoPlayerFinished :: ([[Int]], [[Int]]) -> Int
 checkIfTwoPlayerFinished (attacks, attacks2) | (length(convertLevelPixelLevel dim one)) == (length([ True | [xS, yS, colorS] <- (attacks), elem ([xS, yS]) (convertLevelPixelLevel dim one)])) = 1
