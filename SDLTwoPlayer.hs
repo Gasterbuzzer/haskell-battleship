@@ -37,9 +37,13 @@ dim = (30, 12)
 movedim :: (Int, Int)
 movedim = (10, 10)
 
+constShips :: [Int]
+constShips = [4, 4, 3, 3, 2]
+
 ----------------------------------------------------------------------------------
 -- Key Functions.
 ----------------------------------------------------------------------------------
+
 getKeyDataTuples keyState =
   map (\(k, t) -> ("Pressed", k, t)) (pressed keyState)
     ++ map (\(k, d) -> ("Held", k, d)) (held keyState)
@@ -49,7 +53,6 @@ getButtonDataTuples buttonState =
   map (\(k, t) -> ("Pressed", k, t)) (pressedB buttonState)
     ++ map (\(k, d) -> ("Held", k, d)) (heldB buttonState)
     ++ map (\(k, t) -> ("Released", k, t)) (releasedB buttonState)
-
 
 ----------------------------------------------------------------------------------
 -- Key Update States.
@@ -159,17 +162,20 @@ move (xdim, ydim) ("Pressed", "SPACE", _) (x, y, cursorColor, cursorMode, curren
 
 move _ _ (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
 
-constShips = [4, 4, 3, 3, 2]
+
 
 check :: MyState -> [[Int]] -> Int
 check (x', y', a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) xxs | length (helper (x', y', a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) xxs) == 1      = 1
                                                                                              | otherwise                                                          = 4
     where helper (x', y', a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) xxs = [1 | xs <- xxs, head xs == x' && xs !! 1 == y']
 
+
 checkAttack1 :: MyState -> [[Int]] -> Int
 checkAttack1 (x', y', a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) level | length (helper (x', y', a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) level) == 1 = 1
                                                                                                       | otherwise                                                       = 4
     where helper (x', y', a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) level                                                               = [1 | xs <- (level), head xs == x' && xs !! 1 == y']
+
+
 
 addShipAttack1 :: MyState -> [[Int]]
 addShipAttack1 (x', y', a, 0, level, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = [[x', y', checkAttack1 (x', y', a, 0, level, attacks, attacks2, playerShips1, playerShips2, crotation, cship) playerShips2]] ++ attacks
@@ -178,9 +184,6 @@ addShipAttack1 (x', y', a, 1, level, attacks, attacks2, playerShips1, playerShip
 addShipAttack2 :: MyState -> [[Int]]
 addShipAttack2 (x', y', a, 0, level, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = [] ++ attacks2
 addShipAttack2 (x', y', a, 1, level, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = [[x', y', checkAttack1 (x', y', a, 1, level, attacks, attacks2, playerShips1, playerShips2, crotation, cship) playerShips1]] ++ attacks2
-
-addShip :: MyState -> [[Int]]
-addShip (x', y', a, b, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = [[x', y', check (x', y', a, b, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) [[1,2,3]]]] ++ attacks
 
 ----------------------------------------------------------------------------------
 -- Frame Functions
@@ -202,7 +205,6 @@ toFrameList (xdim, ydim) pixels (xC, yC, cursorColor, cursorMode, level, attacks
   2 -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks2])++(convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(convertLevelPixel (xdim, ydim) [attacks2])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
   3 -> toFrameList (xdim, ydim) ((if cursorMode == 2 then (convertLevelPixelPlace (xdim, ydim) [playerShips2]) else [])++(if cursorMode == 3 then (convertLevelPixelPlace (xdim, ydim) [playerShips1]) else [])++levelHudBorders) (xC, yC, cursorColor, cursorMode, (if (cursorMode == 0 || cursorMode == 1) then 1 else 0), attacks, attacks2, playerShips1, playerShips2, crotation, cship)
   4 -> toFrameList (xdim, ydim) (endScreenPixel) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
-  9 -> toFrameList (xdim, ydim) ((levelShipHud 1 [[2,3],[18,3],[18,4],[18,5],[18,6],[18,2], [18,2]])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
   _ -> toFrameList (xdim, ydim) ((convertLevelPixel (xdim, ydim) [attacks2])++(convertLevelPixel (xdim, ydim) [attacks])++levelHudBorders++(convertLevelPixel (xdim, ydim) [attacks2])) (xC, yC, cursorColor, cursorMode, 0, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
 
 getInfoPixel :: [[Int]] -> [Int] -> Int
@@ -238,65 +240,9 @@ eventMain events state = (toFrameList dim helloTextPixel state', state')
 -- Level Functions/Variables
 ----------------------------------------------------------------------------------
 
--- BEGIN BATTLESHIP
-one :: [[[Int]]]
-one = [[[11,3],[11,4],[11,5],[11,6]],
-       [[4,1],[4,2],[4,3],[4,4]],
-       [[6,4],[7,4],[8,4]],
-       [[3,9],[4,9],[5,9]],
-       [[11,10],[12,10]]]
-
-twop1 :: [[[Int]]]
-twop1 = [[[9,3],[10,3],[11,3],[12,3]],
-       [[9,7],[9,8],[9,9],[9,10]],
-       [[3,3],[4,3],[5,3]],
-       [[4,8],[5,8],[6,8]],
-       [[6,1],[7,1]]]
-
-threep1 :: [[[Int]]]
-threep1 = [[[7,6],[8,6],[9,6],[10,6]],
-         [[4,6],[4,7],[4,8],[4,9]],
-         [[4,1],[5,1],[6,1]],
-         [[12,8],[12,9],[12,10]],
-         [[8,1],[8,2]]]
-
-fourthp1 :: [[[Int]]]
-fourthp1 = [[[0,0]]]
-
-
-onep2 :: [[[Int]]]
-onep2 = [[[25,3],[25,4],[25,5],[25,6]],
-       [[18,1],[18,2],[18,3],[18,4]],
-       [[20,4],[21,4],[22,4]],
-       [[17,9],[18,9],[19,9]],
-       [[25,10],[26,10]]]
-
-two :: [[[Int]]]
-two = [[[23,3],[24,3],[25,3],[26,3]],
-       [[23,7],[23,8],[23,9],[23,10]],
-       [[17,3],[18,3],[19,3]],
-       [[18,8],[19,8],[20,8]],
-       [[20,1],[21,1]]]
-
-threep2 :: [[[Int]]]
-threep2 = [[[21,6],[22,6],[23,6],[24,6]],
-         [[18,6],[18,7],[18,8],[18,9]],
-         [[18,1],[19,1],[20,1]],
-         [[26,8],[26,9],[26,10]],
-         [[22,1],[22,2]]]
-
-three :: [[[Int]]]
-three = [[[0,0]]]
-
-fourth :: [[[Int]]]
-fourth = [[[0,0]]]
-
 levelHudBorders :: [[Int]]
 levelHudBorders = [[2, y, 5] | y <- [0..10]] ++ [[13, y, 5] | y <- [0..10]] ++ [[x, 0, 5] | x <- [2..13]] ++ [[x, 11, 5] | x <- [2..13]]           ++ [[16, y, 5] | y <- [0..10]] ++ [[27, y, 5] | y <- [0..10]] ++ [[x, 0, 5] | x <- [16..27]] ++ [[x, 11, 5] | x <- [16..27]]
 -- levelHudBorders: First part left Side, Second part Right Side, Third Part Top, Fourth Part Bottom
-
-levelShipHud :: Int -> [[Int]] -> [[Int]]
-levelShipHud levelNumber attack = [ [(1 + (currentShipSize)), (1 + (shipNumber * 2)), 2] | (shipSize, shipNumber) <- (zip (menuShipControl attack (convertNumberLevel levelNumber)) [0..]), currentShipSize <- [1..shipSize]]           ++           [ [(1 + (currentShipSize)), 1+( (length((menuShipControl attack (convertNumberLevel levelNumber)))*2) + (shipNumber * 2)), 1] | (shipSize, shipNumber) <- (zip (removeItemList (menuShipControl attack (convertNumberLevel levelNumber)) (shipsInLevel levelNumber) (length (menuShipControl attack (convertNumberLevel levelNumber)))) [0..]), currentShipSize <- [1..shipSize]]
 
 newShip :: ShipLength -> Rotation -> MyState -> [[Int]]
 newShip 1 _ (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = [[x,y]]
@@ -307,14 +253,6 @@ newShip n 0 (x, y, a, 3, c, attacks, attacks2, playerShips1, playerShips2, crota
 newShip n 1 (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) | (y + n - 1) < 11 = newShip (n-1) 1 (x, y, a, b, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) ++ [[x, y + n - 1]]
                                                                                              | otherwise = error "ship out of map"
 newShip _ _ _ = error "mhh something went wrong"
-
-rotation :: Rotation -> Rotation
-rotation 0 = 1
-rotation 1 = 0
-rotation _ = error "mhh something went wrong"
-
-checkIfLevelFinished :: [[[Int]]] -> MyState -> Bool
-checkIfLevelFinished level (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (length(convertLevelPixelLevel dim level)) == (length([ True | [xS, yS, colorS] <- (attacks), elem ([xS, yS]) (convertLevelPixelLevel dim level)]))
 
 checkIfTwoPlayerFinished :: ([[Int]], [[Int]], [[Int]], [[Int]]) -> Int
 checkIfTwoPlayerFinished (attacks, attacks2, playerShips1, playerShips2) | (length(playerShips2)) == (length([ True | [xS, yS, colorS] <- (nub attacks), elem ([xS, yS]) (playerShips2)])) = 1
@@ -330,33 +268,6 @@ convertLevelPixel dim level = [ [xS, yS, color] | ship <- level, [xS, yS, color]
 
 convertLevelPixelPlace :: (Int, Int) -> [[[Int]]] -> [[Int]]
 convertLevelPixelPlace dim level = [ [xS, yS, 2] | ship <- level, [xS, yS] <- ship]
-
-convertLevelPixelLevel :: (Int, Int) -> [[[Int]]] -> [[Int]]
-convertLevelPixelLevel dim level = [ [xS, yS] | ship <- level, [xS, yS] <- ship]
-
-convertLevelPixelLevelTest :: (Int, Int) -> [[[Int]]] -> [[Int]]
-convertLevelPixelLevelTest dim level = [ [xS, yS, 1] | ship <- level, [xS, yS] <- ship]
-
-convertNumberLevel :: Int -> [[[Int]]]
-convertNumberLevel number | number == 1 = one
-                          | number == 2 = two
-                          | number == 3 = three
-                          | number == 4 = fourth
-                          | otherwise = one
-
-emptyAttack :: [[Int]]
-emptyAttack = [[]]
-
-increaseCurrentLevel :: Int -> Bool -> Int
-increaseCurrentLevel levelNumber finishedBool | finishedBool = (levelNumber + 1)
-                                              | otherwise = levelNumber
-
-shouldIEmpty :: [[Int]] -> Bool -> [[Int]]
-shouldIEmpty attacks finishedBool | finishedBool = emptyAttack
-                                  | otherwise = attacks
-
-shipsInLevel :: Int -> [Int]
-shipsInLevel levelNumber = sort [ length(ship) | ship <- (convertNumberLevel(levelNumber))]
 
 menuShipControl :: [[Int]] -> [[[Int]]] -> [Int]
 menuShipControl xxs yys = controlEach (nub xxs) yys
