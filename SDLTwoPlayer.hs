@@ -118,13 +118,13 @@ move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 2, currentLevel, 
                                                                                                     playerShips1 ++ newShip (constShips !! 4) crotation (x, y, cursorColor, 2, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, 4),
                                                                                                     playerShips2, crotation, 0)
 -- MOVE RETURN MODE 2 CSHIP _
-move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 2, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (17, 1, 2, 2,
+move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 2, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (3, 1, 2, 2,
                                                                                                      (if ((checkIfTwoPlayerFinished (attacks, attacks2, playerShips1, playerShips2)) /= 0) then (4) else (currentLevel)),
                                                                                                      attacks, attacks2,
                                                                                                      playerShips1 ++ newShip (constShips !! cship) crotation (x, y, cursorColor, 2, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship),
                                                                                                      playerShips2, crotation, cship + 1)
 -- MOVE RETURN MODE 3 CSHIP 4
-move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 3, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, 4) = (17, 1, 2, 0,
+move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 3, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, 4) = (3, 1, 2, 0,
                                                                                                      (if ((checkIfTwoPlayerFinished (attacks, attacks2, playerShips1, playerShips2)) /= 0) then (4) else (currentLevel)),
                                                                                                      attacks, attacks2, playerShips1,
                                                                                                      playerShips2  ++ newShip (constShips !! 4) crotation (x, y, cursorColor, 3, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, 4),
