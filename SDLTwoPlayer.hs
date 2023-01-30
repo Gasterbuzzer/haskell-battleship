@@ -349,3 +349,4 @@ main = do
       eventMain
       initState
   destroySDLControlWindow window
+  
