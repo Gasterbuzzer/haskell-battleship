@@ -121,12 +121,12 @@ checkAttack1 (x', y', a, b, c, attacks, attacks2) level | length (helper (x', y'
     where helper (x', y', a, b, c, attacks, attacks2) level                                                               = [1 | xs <- (concat level), head xs == x' && xs !! 1 == y']
 
 addShipAttack1 :: MyState -> [[Int]]
-addShipAttack1 (x', y', a, b, 0, attacks, attacks2) = [[x', y', checkAttack1 (x', y', a, b, 0, attacks, attacks2) (convertNumberLevel 0)]] ++ attacks
-addShipAttack1 (x', y', a, b, 1, attacks, attacks2) = [[x', y', checkAttack1 (x', y', a, b, 0, attacks, attacks2) (convertNumberLevel 0)]] ++ attacks
+addShipAttack1 (x', y', a, b, 0, attacks, attacks2) = [[x', y', checkAttack1 (x', y', a, b, 0, attacks, attacks2) (convertNumberLevel 1)]] ++ attacks
+addShipAttack1 (x', y', a, b, 1, attacks, attacks2) = [[x', y', checkAttack1 (x', y', a, b, 0, attacks, attacks2) (convertNumberLevel 1)]] ++ attacks
 
 addShipAttack2 :: MyState -> [[Int]]
-addShipAttack2 (x', y', a, b, 0, attacks, attacks2) = [[x', y', checkAttack1 (x', y', a, b, 0, attacks, attacks2) (convertNumberLevel 1)]] ++ attacks2
-addShipAttack2 (x', y', a, b, 1, attacks, attacks2) = [[x', y', checkAttack1 (x', y', a, b, 0, attacks, attacks2) (convertNumberLevel 1)]] ++ attacks2
+addShipAttack2 (x', y', a, b, 0, attacks, attacks2) = [[x', y', checkAttack1 (x', y', a, b, 0, attacks, attacks2) (convertNumberLevel 2)]] ++ attacks2
+addShipAttack2 (x', y', a, b, 1, attacks, attacks2) = [[x', y', checkAttack1 (x', y', a, b, 0, attacks, attacks2) (convertNumberLevel 2)]] ++ attacks2
 
 addShip :: MyState -> [[Int]]
 addShip (x', y', a, b, currentLevel, attacks, attacks2) = [[x', y', check (x', y', a, b, currentLevel, attacks, attacks2) (convertNumberLevel currentLevel)]] ++ attacks
