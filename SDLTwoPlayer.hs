@@ -105,28 +105,29 @@ move (xdim, ydim) ("Held", "RIGHT", dur) (x, y, a, 0, c, attacks, attacks2, play
 -- MOVE MODE 1 ROTATION _
 move (xdim, ydim) ("Pressed", "UP", _) (x, y, a, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (x, ((y - 2) `mod` ydim) + 1, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
 move (xdim, ydim) ("Held", "UP", dur) (x, y, a, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = if dur >= 100 then (x, ((y - 2) `mod` ydim) + 1, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) else (x, y, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
-move (xdim, ydim) ("Pressed", "LEFT", _) (x, y, a, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (if x > 10 || x < 4 then ((x - 1) `mod` xdim) + 10 else (x - 1) `mod` xdim, y, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
-move (xdim, ydim) ("Held", "LEFT", dur) (x, y, a, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = if dur >= 100 then (if x > 10 || x < 4 then ((x - 1) `mod` xdim) + 10 else (x - 1) `mod` xdim, y, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) else (x, y, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
+move (xdim, ydim) ("Pressed", "LEFT", _) (x, y, a, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (if x > 20 || x < 18 then ((x - 1) `mod` xdim) + 20 else ((x - 1) `mod` xdim) + 10, y, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
+move (xdim, ydim) ("Held", "LEFT", dur) (x, y, a, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = if dur >= 100 then (if x > 20 || x < 18 then ((x - 1) `mod` xdim) + 20 else ((x - 1) `mod` xdim) + 10, y, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) else (x, y, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
 move (xdim, ydim) ("Pressed", "DOWN", _) (x, y, a, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (x, (y `mod` ydim) + 1, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
 move (xdim, ydim) ("Held", "DOWN", dur) (x, y, a, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = if dur >= 100 then (x, (y `mod` ydim) + 1, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) else (x, y, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
-move (xdim, ydim) ("Pressed", "RIGHT", _) (x, y, a, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (if x == 10 || x == 11 then (x `mod` xdim) + 11 else (x `mod` xdim) + 1, y, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
-move (xdim, ydim) ("Held", "RIGHT", dur) (x, y, a, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = if dur >= 100 then (if x == 10 || x == 11 then (x `mod` xdim) + 11 else (x `mod` xdim) + 1, y, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) else (x, y, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
+move (xdim, ydim) ("Pressed", "RIGHT", _) (x, y, a, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (if x < 19 || x > 25 then ((x + 1) `mod` xdim) + 10 else ((x + 1) `mod` xdim) + 20, y, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
+move (xdim, ydim) ("Held", "RIGHT", dur) (x, y, a, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = if dur >= 100 then (if x < 19 || x > 25 then ((x + 1) `mod` xdim) + 10 else ((x + 1) `mod` xdim) + 20, y, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship) else (x, y, 2, 1, c, attacks, attacks2, playerShips1, playerShips2, crotation, cship)
 -- MOVE RETURN MODE 2 CSHIP 4
-move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 2, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, 1) = (17, 1, 2, 3, currentLevel, attacks, attacks2,
-                                                                                                     drop 1 playerShips1 ++ newShip (constShips !! 4) crotation (x, y, cursorColor, 2, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, 4),
-                                                                                                     playerShips2, crotation, 0)
--- MOVE RETURN MODE 2 CSHIP _
-move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 2, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (3, 1, 2, 2, currentLevel, attacks, attacks2,
-                                                                                                     playerShips1 ++ newShip (constShips !! cship) crotation (x, y, cursorColor, 2, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship),
-                                                                                                     playerShips2, crotation, cship + 1)
--- MOVE RETURN MODE 3 CSHIP 4
-move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 3, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, 1) = (3, 1, 2, 0, currentLevel, attacks, attacks2, playerShips1,
+move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 2, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, 1) = (17, 1, 2, 3, currentLevel, attacks, attacks2, playerShips1,
                                                                                                      drop 1 playerShips2  ++ newShip (constShips !! 4) crotation (x, y, cursorColor, 3, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, 4),
                                                                                                      crotation, 0)
--- MOVE RETURN MODE 3 CSHIP _
-move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 3, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (17, 1, 2, 3, currentLevel, attacks, attacks2, playerShips1,
+-- MOVE RETURN MODE 2 CSHIP _
+move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 2, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (3, 1, 2, 2, currentLevel, attacks, attacks2, playerShips1,
                                                                                                      playerShips2 ++ newShip (constShips !! cship) crotation (x, y, cursorColor, 3, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship),
                                                                                                      crotation, cship + 1)
+-- MOVE RETURN MODE 3 CSHIP 4
+move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 3, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, 1) = (3, 1, 2, 0, currentLevel, attacks, attacks2,
+                                                                                                     drop 1 playerShips1 ++ newShip (constShips !! 4) crotation (x, y, cursorColor, 2, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, 4),
+                                                                                                     playerShips2, crotation, 0)
+-- MOVE RETURN MODE 3 CSHIP _
+move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 3, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (17, 1, 2, 3, currentLevel, attacks, attacks2,
+                                                                                                     playerShips1 ++ newShip (constShips !! cship) crotation (x, y, cursorColor, 2, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship),
+                                                                                                     playerShips2, crotation, cship + 1)
+                                                                                                     
 -- MOVE RETURN MODE 0
 move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, 0, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (playerShips2) == 1 then x else 17,
                                                                                                      if check (x, y,cursorColor, 1, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) (playerShips2) == 1 then y else 1,
@@ -310,8 +311,8 @@ checkIfLevelFinished :: [[[Int]]] -> MyState -> Bool
 checkIfLevelFinished level (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2, playerShips1, playerShips2, crotation, cship) = (length(convertLevelPixelLevel dim level)) == (length([ True | [xS, yS, colorS] <- (attacks), elem ([xS, yS]) (convertLevelPixelLevel dim level)]))
 
 checkIfTwoPlayerFinished :: ([[Int]], [[Int]], [[Int]], [[Int]]) -> Int
-checkIfTwoPlayerFinished (attacks, attacks2, playerShips1, playerShips2) | (length(playerShips1)) == (length([ True | [xS, yS, colorS] <- (attacks), elem ([xS, yS]) (playerShips1)])) = 1
-                                                                         | (length(playerShips2)) == (length([ True | [xS, yS, colorS] <- (attacks2), elem ([xS, yS]) (playerShips2)])) = 2
+checkIfTwoPlayerFinished (attacks, attacks2, playerShips1, playerShips2) | (length(playerShips2)) == (length([ True | [xS, yS, colorS] <- (nub attacks), elem ([xS, yS]) (playerShips2)])) = 1
+                                                                         | (length(playerShips1)) == (length([ True | [xS, yS, colorS] <- (nub attacks2), elem ([xS, yS]) (playerShips1)])) = 2
                                                                          | otherwise = 0
 
 ----------------------------------------------------------------------------------
