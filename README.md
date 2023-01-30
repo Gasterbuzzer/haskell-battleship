@@ -19,8 +19,7 @@ The used data type for events is "KeyStatus" which is used for formatting our gi
 There are multiple interconnecting functions which help bring our game to life.
 Our life blood is our function "toFrameList" which takes the dimensions of our screen, the pixels to draw and our current gamestate as a "MyState" data type. This will then call all other respective functions for drawing the field.
 Then we have the "move" function which evaluates the given Input and transform the given "MyState" to the updated "MyState" which takes the given event and calls the according functions.
-Most of the rest used functions are used as helper functions, examples of these are: checking if the player has won by going through the list of hit ships (checkIfLevelFinished), checking which ships to draw at the left side of the game field (levelShipHud) and helper functions of helper functions such as (menuShipControl) which takes the list of past attacks and the current level and returns all missing ships.
-
+Most of the rest used functions are used as helper functions, examples of these are: checking if any player has won by going through the list of hit ships (checkIfTwoPlayerFinished), which calculates how to draw the cursor based on what it is suppose to do (placing ships, attacking) (cursorCalculate), functions that helps converting a list of attacking positions to a drawable state for our "toFrameList" function (convertLevelPixel) and so on.
 ## Installation
 ### Locally
 Use SDLTwoPlayer.hs in the given ZIP as the Main program, if you do not have a ready stack environment for the given LED wall, use the provided haskell-battleship-env.zip as your environment and follow the steps on the installation of SDL2 (See for reference "sdl2.pdf").
