@@ -210,7 +210,7 @@ getInfoPixel :: [[Int]] -> [Int] -> Int
 getInfoPixel pixels [x, y] = [infoPixel | [x', y', infoPixel] <- pixels, x' == x, y' == y] !! 0
 
 cursorCalculate :: Int -> Int -> Int -> Int -> Int -> Int -> [[Int]]
-cursorCalculate x y cRotation cShip cursorMode cursorColor | (cursorMode == 2) || (cursorMode == 3) = [ if (cRotation == 0) then [x+shipPos, y, cursorColor] else [x, y+shipPos, cursorColor] | shipPos <- [0,1..(constShips !! cShip)]]
+cursorCalculate x y cRotation cShip cursorMode cursorColor | (cursorMode == 2) || (cursorMode == 3) = [ if (cRotation == 0) then [x+shipPos, y, cursorColor] else [x, y+shipPos, cursorColor] | shipPos <- [0,1..((constShips !! cShip)-1)]]
                                                            | otherwise = [[x, y, cursorColor]]
 
 ----------------------------------------------------------------------------------
