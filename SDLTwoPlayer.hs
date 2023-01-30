@@ -74,7 +74,7 @@ move (xdim, ydim) ("Pressed", "RETURN", _) (x, y, cursorColor, cursorMode, curre
                                                                                                      y,
                                                                                                      check (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2) (convertNumberLevel currentLevel),
                                                                                                      cursorMode,
-                                                                                                     (if (checkIfLevelFinished (convertNumberLevel currentLevel) (0, 0, 0, 0, currentLevel, (addShip (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2)), attacks2)) then 4 else currentLevel),
+                                                                                                     (if ((checkIfTwoPlayerFinished (attacks, attacks2)) /= 0) then (4) else (currentLevel)),
                                                                                                      (addShipAttack1 (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2)),
                                                                                                      (addShipAttack2 (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2)))
 
@@ -131,6 +131,10 @@ addShipAttack2 (x', y', a, b, 1, attacks, attacks2) = [[x', y', checkAttack1 (x'
 addShip :: MyState -> [[Int]]
 addShip (x', y', a, b, currentLevel, attacks, attacks2) = [[x', y', check (x', y', a, b, currentLevel, attacks, attacks2) (convertNumberLevel currentLevel)]] ++ attacks
 
+invertLevelZeroOne :: Int -> Int
+invertLevelZeroOne level | level == 1 = 0
+                         | otherwise  = 1
+
 ----------------------------------------------------------------------------------
 -- Frame Functions
 ----------------------------------------------------------------------------------
@@ -185,25 +189,53 @@ eventMain events state = (toFrameList dim helloTextPixel state', state')
 
 -- BEGIN BATTLESHIP
 one :: [[[Int]]]
-one = [[[18,2],[18,3],[18,4],[18,5],[18,6]],
-       [[11,1],[11,2],[11,3],[11,4]],
-       [[13,4],[14,4],[15,4]],
-       [[10,9],[11,9],[12,9]],
-       [[18,10],[19,10]]]
+one = [[[11,3],[11,4],[11,5],[11,6]],
+       [[4,1],[4,2],[4,3],[4,4]],
+       [[6,4],[7,4],[8,4]],
+       [[3,9],[4,9],[5,9]],
+       [[11,10],[12,10]]]
+
+twop1 :: [[[Int]]]
+twop1 = [[[9,3],[10,3],[11,3],[12,3]],
+       [[9,7],[9,8],[9,9],[9,10]],
+       [[3,3],[4,3],[5,3]],
+       [[4,8],[5,8],[6,8]],
+       [[6,1],[7,1]]]
+
+threep1 :: [[[Int]]]
+threep1 = [[[7,6],[8,6],[9,6],[10,6]],
+         [[4,6],[4,7],[4,8],[4,9]],
+         [[4,1],[5,1],[6,1]],
+         [[12,8],[12,9],[12,10]],
+         [[8,1],[8,2]]]
+
+fourthp1 :: [[[Int]]]
+fourthp1 = [[[0,0]]]
+
 
 two :: [[[Int]]]
-two = [[[16,3],[17,3],[18,3],[19,3]],
-       [[16,7],[16,8],[16,9],[16,10]],
-       [[10,3],[11,3],[12,3]],
-       [[11,8],[12,8],[13,8]],
-       [[13,1],[14,1]]]
+two = [[[25,3],[25,4],[25,5],[25,6]],
+       [[18,1],[18,2],[18,3],[18,4]],
+       [[20,4],[21,4],[22,4]],
+       [[17,9],[18,9],[19,9]],
+       [[25,10],[26,10]]]
+
+twop2 :: [[[Int]]]
+twop2 = [[[23,3],[24,3],[25,3],[26,3]],
+       [[23,7],[23,8],[23,9],[23,10]],
+       [[17,3],[18,3],[19,3]],
+       [[18,8],[19,8],[20,8]],
+       [[20,1],[21,1]]]
+
+threep2 :: [[[Int]]]
+threep2 = [[[21,6],[22,6],[23,6],[24,6]],
+         [[18,6],[18,7],[18,8],[18,9]],
+         [[18,1],[19,1],[20,1]],
+         [[26,8],[26,9],[26,10]],
+         [[22,1],[22,2]]]
 
 three :: [[[Int]]]
-three = [[[14,6],[15,6],[16,6],[17,6]],
-         [[11,1],[12,1],[13,1]],
-         [[19,8],[19,9],[19,10]],
-         [[15,1],[15,2]],
-         [[10,6],[10,7]]]
+three = [[[0,0]]]
 
 fourth :: [[[Int]]]
 fourth = [[[0,0]]]
@@ -230,6 +262,11 @@ rotation _ = error "mhh something went wrong"
 
 checkIfLevelFinished :: [[[Int]]] -> MyState -> Bool
 checkIfLevelFinished level (x, y, cursorColor, cursorMode, currentLevel, attacks, attacks2) = (length(convertLevelPixelLevel dim level)) == (length([ True | [xS, yS, colorS] <- (attacks), elem ([xS, yS]) (convertLevelPixelLevel dim level)]))
+
+checkIfTwoPlayerFinished :: ([[Int]], [[Int]]) -> Int
+checkIfTwoPlayerFinished (attacks, attacks2) | (length(convertLevelPixelLevel dim one)) == (length([ True | [xS, yS, colorS] <- (attacks), elem ([xS, yS]) (convertLevelPixelLevel dim one)])) = 1
+                                             | (length(convertLevelPixelLevel dim two)) == (length([ True | [xS, yS, colorS] <- (attacks), elem ([xS, yS]) (convertLevelPixelLevel dim two)])) = 2
+                                             | otherwise = 0
 
 ----------------------------------------------------------------------------------
 -- Helper Functions
